@@ -1,0 +1,48 @@
+﻿Título: Juego de Ajedrez Clásico
+
+
+Integrantes:
+Arienti, Lucio Ernesto
+Bayarri, Renzo Matías
+Fiore, Francisco José Filipo
+Martinez, Mauricio Sergio
+Ortiz Elizondo, Luis Gastón
+
+
+Herramientas a utilizar:
+Lenguaje de programación Python3
+Framework Tkinter para la interfaz gráfica
+Pycharm IDE
+Sistema de control de versiones GIT
+Sistema Operativo Linux
+StrongSwan u OpenSwan para conexiones vpn
+
+
+Se pretende realizar un aplicación de escritorio en dónde se dibuje un tablero de ajedrez con casillas blancas y negras de tamaño 8x8.
+Se podría optar entre jugar contra otro usuario conectado vía VPN o utilizando una única computadora si esto no es posible.
+Al inicio, se mostrarían las piezas ubicadas en su lugar correspondiente dentro del tablero.
+Los jugadores mueven una de sus piezas alternadamente.
+
+
+El jugador que tiene las piezas blancas empieza.
+El usuario, al clickear sobre una pieza, el sistema calculará e iluminará las posibles casillas a las que se podría mover y se desplaza haciendo click en una de estas.
+
+
+Movimiento de cada pieza:
+La torre se mueve de forma horizontal y vertical.
+El alfil se mueve de forma diagonal.
+La dama puede moverse en horizontal, vertical o diagonal.
+El rey puede moverse en todas direcciones pero solo una casilla.
+El caballo se puede mover en forma de “L” (dos horizontal una vertical o viceversa).
+Un peón se mueve hacia adelante una casilla, si este escaque está vacío. Si el peón todavía no se ha movido, en su primer movimiento también tiene la opción de mover dos escaques hacia adelante, siempre que ambos escaques estén vacíos. Los peones no se pueden mover hacia atrás.
+Un peón puede capturar una pieza adversaria en cualquiera de los escaques diagonales en frente del peón 
+También se deben tener en cuenta los movimientos especiales que pueden darse en distintas situaciones como el enroque y el peón al paso.
+
+
+Al comer una pieza del oponente simplemente se elimina del tablero.
+No existe límite de tiempo por lo cual no es posible terminar una partida a través de este.
+
+
+El juego continúa hasta que se hace jaque mate al rey enemigo según las reglas del juego o si uno de los dos jugadores se rinde.
+Al finalizar la partida se reinicia el tablero con las respectivas piezas en su lugar.
+
