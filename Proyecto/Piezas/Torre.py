@@ -1,11 +1,11 @@
-import Pieza
+from Proyecto.Piezas import Pieza as P
 
 
-class Torre(Pieza):
+class Torre(P.Pieza):
 
     def __init__(self, is_white):
         super().__init__(is_white)
-        self._image = Pieza.Pieza.images['torre_blanca'] if is_white else Pieza.Pieza.images['torre_negra']
+        self._nombre = "torre_blanca" if is_white else "torre_negra"
 
-    def get_image(self):
-        return self._image
+    def get_posibles_casillas_destino(self):
+        pass;
