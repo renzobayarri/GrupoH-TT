@@ -2,25 +2,11 @@ from abc import ABC, abstractmethod
 
 
 class Pieza(ABC):
-    nombres = {
-        "torre_blanca",
-        "torre_negra",
-        "caballo_blanco",
-        "caballo_negro",
-        "alfil_blanco",
-        "alfil_negro",
-        "reina_blanca",
-        "reina_negra",
-        "rey_blanco",
-        "rey_negro",
-        "peon_blanco",
-        "peon_negro"
-    }
 
     def __init__(self, is_white):
         self._isWhite = is_white
         self._nombre = ""
-        self._casilla = None
+        self._image = None
 
     def get_is_white(self):
         return self._isWhite
@@ -30,11 +16,12 @@ class Pieza(ABC):
 
     def set_nombre(self,nombre):
         self._nombre = nombre
-    def get_casilla(self):
-        return self._casilla
 
-    def set_casilla(self, casilla):
-        self._casilla = casilla
+    def get_image(self):
+        return self._image
+
+    def set_image(self,image):
+        self._image = image
 
     @abstractmethod
     def get_posibles_casillas_destino(self):

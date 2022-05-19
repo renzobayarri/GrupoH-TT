@@ -8,6 +8,8 @@ class Tablero:
 
     def __init__(self):
         self._casillas = []
+        self._casilla_seleccionada = None
+        self._casillas_posibles_destino = []
         for fila in range(8):
             filas = []
             for columna in range(8):
@@ -23,7 +25,8 @@ class Tablero:
 
         for fila in range(8):
             if fila in (2, 5):
-                continue
+                for columna in range(8):
+                    self._casillas[fila][columna].set_pieza(None)
 
             for columna in range(8):
                 if fila == 0 or fila == 1:
@@ -45,38 +48,12 @@ class Tablero:
                 elif fila == 1 or fila == 6:
                     self._casillas[fila][columna].set_pieza(Peon.Peon(blanca))
 
-    def imprimir_casillas(self):
-        for fila in self._casillas:
-            for casilla in fila:
-                print(casilla)
-
-    def dibujar_tablero(self):
-        root = tk.Tk()
-        lado_maximo = 75
-        screen_height = root.winfo_screenheight()
-        lado_pantalla = int((screen_height - 150)/8)
-        lado = lado_maximo if lado_pantalla > lado_maximo else lado_pantalla
-        self.cargar_imagenes(lado)
-        for i in range(8):
-            root.columnconfigure(i)
-            root.rowconfigure(i)
-        img = tk.PhotoImage(width=lado, height=lado)
-        for fila in self._casillas:
-            for casilla in fila:
-                if casilla.get_pieza() is None:
-                    label = tk.Label(root, background=casilla.get_color(), image=img)
-                else:
-                    label = tk.Label(root, image=self._images_tk[casilla.get_pieza().get_nombre()]
-                                      , background=casilla.get_color())
-                label.grid(column=casilla.get_columna(), row=casilla.get_fila())
-
-        root.mainloop()
-
     def cargar_imagenes(self, lado):
 
-        reductor = int(150/lado)
+        reductor = int(150/lado) if lado <= 75 else 2
 
         self._images_tk = {
+            "vacia" : tk.PhotoImage(width=lado, height=lado),
             "torre_blanca": tk.PhotoImage(file="./assets/wr.png").subsample(reductor,reductor),
             "torre_negra": tk.PhotoImage(file="./assets/br.png").subsample(reductor,reductor),
             "caballo_blanco": tk.PhotoImage(file="./assets/wn.png").subsample(reductor,reductor),
@@ -90,3 +67,60 @@ class Tablero:
             "peon_blanco": tk.PhotoImage(file="./assets/wp.png").subsample(reductor,reductor),
             "peon_negro": tk.PhotoImage(file="./assets/bp.png").subsample(reductor,reductor),
         }
+
+    def asignar_labels_imagenes(self,root):
+        for fila in self._casillas:
+            for casilla in fila:
+                casilla.set_label(tk.Label(root, background=casilla.get_color()))
+                if casilla.get_pieza() is None:
+                    casilla.get_label()["image"] = self._images_tk['vacia']
+                    casilla.get_label().bind("<Button>", lambda event, casilla=casilla: self.click(casilla=casilla))
+                else:
+                    casilla.get_pieza().set_image(self._images_tk[casilla.get_pieza().get_nombre()])
+                    casilla.get_label()["image"] = casilla.get_pieza().get_image()
+                    casilla.get_label().bind("<Button>", lambda event, casilla=casilla: self.click(casilla=casilla))
+                casilla.get_label().grid(column=casilla.get_columna(), row=casilla.get_fila())
+
+    def dibujar_tablero(self):
+        root = tk.Tk()
+        Casilla.Casilla.calcular_tamanio_lado(root)
+
+        for i in range(8):
+            root.columnconfigure(i)
+            root.rowconfigure(i)
+
+        self.cargar_imagenes(Casilla.Casilla.lado)
+        self.asignar_labels_imagenes(root)
+
+        root.mainloop()
+
+    def click(self, casilla):
+        if self._casilla_seleccionada:
+            if casilla in self._casillas_posibles_destino:
+                pass
+                #Mover o Comer
+            else:
+                self.cancelar_seleccion()
+                if casilla.get_pieza() is not None:
+                    self.seleccionar_casilla(casilla)
+        else:
+            if casilla.get_pieza() is not None:
+                self.seleccionar_casilla(casilla)
+
+    def seleccionar_casilla(self,casilla):
+        self._casilla_seleccionada = casilla
+        self._casillas_posibles_destino = casilla.get_pieza().get_casillas_posibles_destino()
+        self.pintar_casillas()
+
+    def pintar_casillas(self):
+        for casilla in self._casillas_posibles_destino:
+            casilla.get_label()["background"] = "green"
+
+    def cancelar_seleccion(self):
+        self.despintar_casillas()
+        self._casillas_posibles_destino = []
+        self._casilla_seleccionada = None
+
+    def despintar_casillas(self):
+        for casilla in self._casillas_posibles_destino:
+            casilla.get_label()["background"] = casilla.get_color()
