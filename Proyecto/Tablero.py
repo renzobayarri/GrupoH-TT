@@ -109,8 +109,9 @@ class Tablero:
 
     def seleccionar_casilla(self,casilla):
         self._casilla_seleccionada = casilla
-        self._casillas_posibles_destino = casilla.get_pieza().get_casillas_posibles_destino()
-        self.pintar_casillas()
+        #self._casillas_posibles_destino = casilla.get_pieza().get_casillas_posibles_destino()
+        print(casilla.get_pieza().get_posibles_casillas_destino(casilla._fila, casilla._columna))
+        #self.pintar_casillas()
 
     def pintar_casillas(self):
         for casilla in self._casillas_posibles_destino:
