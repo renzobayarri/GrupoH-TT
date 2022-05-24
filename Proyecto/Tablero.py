@@ -97,8 +97,8 @@ class Tablero:
     def click(self, casilla):
         if self._casilla_seleccionada:
             if casilla in self._casillas_posibles_destino:
-                pass
-                #Mover o Comer
+                self.mover(casilla)
+                self.cancelar_seleccion()
             else:
                 self.cancelar_seleccion()
                 if casilla.get_pieza() is not None:
@@ -109,9 +109,8 @@ class Tablero:
 
     def seleccionar_casilla(self,casilla):
         self._casilla_seleccionada = casilla
-        #self._casillas_posibles_destino = casilla.get_pieza().get_casillas_posibles_destino()
-        print(casilla.get_pieza().get_posibles_casillas_destino(casilla._fila, casilla._columna))
-        #self.pintar_casillas()
+        self._casillas_posibles_destino = casilla.get_pieza().get_posibles_casillas_destino(casilla, self._casillas)
+        self.pintar_casillas()
 
     def pintar_casillas(self):
         for casilla in self._casillas_posibles_destino:
@@ -125,3 +124,11 @@ class Tablero:
     def despintar_casillas(self):
         for casilla in self._casillas_posibles_destino:
             casilla.get_label()["background"] = casilla.get_color()
+
+    def mover(self, casilla):
+        casilla.get_label()["image"] = self._casilla_seleccionada.get_pieza().get_image()
+        casilla.set_pieza(self._casilla_seleccionada.get_pieza())
+        if isinstance(self._casilla_seleccionada.get_pieza(), Peon.Peon):
+            self._casilla_seleccionada.get_pieza().set_primera_jugada(False)
+        self._casilla_seleccionada.get_label()["image"] = self._images_tk['vacia']
+        self._casilla_seleccionada.set_pieza(None)
