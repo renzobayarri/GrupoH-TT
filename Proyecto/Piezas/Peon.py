@@ -28,6 +28,10 @@ class Peon(P.Pieza):
         c = casillas[fila+direccion][columna]
         if c.get_pieza() is None:
             casillas_destino.append(c)
+            if self._primera_jugada:
+                c = casillas[fila + (direccion * 2)][columna]
+                if c.get_pieza() is None:
+                    casillas_destino.append(c)
         if columna != 0:
             c = casillas[fila+direccion][columna-1]
             if c.get_pieza() is not None and c.get_pieza().get_is_white() != self.get_is_white():
@@ -35,10 +39,6 @@ class Peon(P.Pieza):
         if columna != 7:
             c = casillas[fila+direccion][columna+1]
             if c.get_pieza() is not None and c.get_pieza().get_is_white() != self.get_is_white():
-                casillas_destino.append(c)
-        if self._primera_jugada:
-            c = casillas[fila+(direccion*2)][columna]
-            if c.get_pieza() is None:
                 casillas_destino.append(c)
 
         return casillas_destino

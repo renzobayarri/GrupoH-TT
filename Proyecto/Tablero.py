@@ -71,7 +71,7 @@ class Tablero:
     def asignar_labels_imagenes(self,root):
         for fila in self._casillas:
             for casilla in fila:
-                casilla.set_label(tk.Label(root, background=casilla.get_color()))
+                casilla.set_label(tk.Label(root, background=casilla.get_color(), borderwidth=1, relief="solid"))
                 if casilla.get_pieza() is None:
                     casilla.get_label()["image"] = self._images_tk['vacia']
                     casilla.get_label().bind("<Button>", lambda event, casilla=casilla: self.click(casilla=casilla))
@@ -114,7 +114,10 @@ class Tablero:
 
     def pintar_casillas(self):
         for casilla in self._casillas_posibles_destino:
-            casilla.get_label()["background"] = "green"
+            if casilla.get_pieza() is not None:
+                casilla.get_label()["background"] = "coral1"
+            else:
+                casilla.get_label()["background"] = "khaki"
 
     def cancelar_seleccion(self):
         self.despintar_casillas()
@@ -126,9 +129,13 @@ class Tablero:
             casilla.get_label()["background"] = casilla.get_color()
 
     def mover(self, casilla):
+        # Setea la nueva casilla
         casilla.get_label()["image"] = self._casilla_seleccionada.get_pieza().get_image()
         casilla.set_pieza(self._casilla_seleccionada.get_pieza())
+
         if isinstance(self._casilla_seleccionada.get_pieza(), Peon.Peon):
             self._casilla_seleccionada.get_pieza().set_primera_jugada(False)
+
+        # Vacía la casilla anterior
         self._casilla_seleccionada.get_label()["image"] = self._images_tk['vacia']
         self._casilla_seleccionada.set_pieza(None)
