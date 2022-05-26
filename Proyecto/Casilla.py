@@ -1,6 +1,6 @@
 class Casilla:
 
-    LADO_MAXIMO = 200
+    LADO_MAXIMO = 75
     lado_segun_pantalla = 0
     lado = 0
 

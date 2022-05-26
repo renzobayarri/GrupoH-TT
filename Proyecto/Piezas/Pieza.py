@@ -24,5 +24,5 @@ class Pieza(ABC):
         self._image = image
 
     @abstractmethod
-    def get_posibles_casillas_destino(self):
+    def get_posibles_casillas_destino(self, casilla, casillas):
         pass

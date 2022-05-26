@@ -8,4 +8,4 @@ class Caballo(P.Pieza):
         self._nombre = "caballo_blanco" if is_white else "caballo_negro"
 
     def get_posibles_casillas_destino(self):
-        return "a"
+        pass;
