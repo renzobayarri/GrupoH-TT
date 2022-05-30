@@ -1,7 +1,6 @@
-from Proyecto.Piezas import Pieza as P
+from .Pieza import Pieza
 
-
-class Reina(P.Pieza):
+class Reina(Pieza):
 
     def __init__(self, is_white):
         super().__init__(is_white)

@@ -1,20 +1,21 @@
-from Proyecto.Piezas import *
-import Casilla
+from Piezas import *
+from Casilla import Casilla
 import tkinter as tk
-from tkinter import ttk
 
 
 class Tablero:
 
-    def __init__(self):
+    def __init__(self, vista_blanca):
         self._casillas = []
         self._casilla_seleccionada = None
         self._casillas_posibles_destino = []
+        self._vista_blanca = vista_blanca
+
         for fila in range(8):
             filas = []
             for columna in range(8):
                 color = "sienna4" if (fila + columna) % 2 == 1 else "white"
-                casilla = Casilla.Casilla(fila, columna, color)
+                casilla = Casilla(fila, columna, color)
                 filas.append(casilla)
             self._casillas.append(filas)
 
@@ -25,8 +26,7 @@ class Tablero:
 
         for fila in range(8):
             if fila in (2, 5):
-                for columna in range(8):
-                    self._casillas[fila][columna].set_pieza(None)
+                pass
 
             for columna in range(8):
                 if fila == 0 or fila == 1:
@@ -50,54 +50,72 @@ class Tablero:
 
     def cargar_imagenes(self, lado):
 
-        reductor = int(150/lado) if lado <= 75 else 2
+        reductor = int(150 / lado) if lado <= 75 else 2
 
         self._images_tk = {
-            "vacia" : tk.PhotoImage(width=lado, height=lado),
-            "torre_blanca": tk.PhotoImage(file="./assets/wr.png").subsample(reductor,reductor),
-            "torre_negra": tk.PhotoImage(file="./assets/br.png").subsample(reductor,reductor),
-            "caballo_blanco": tk.PhotoImage(file="./assets/wn.png").subsample(reductor,reductor),
-            "caballo_negro": tk.PhotoImage(file="./assets/bn.png").subsample(reductor,reductor),
-            "alfil_blanco": tk.PhotoImage(file="./assets/wb.png").subsample(reductor,reductor),
-            "alfil_negro": tk.PhotoImage(file="./assets/bb.png").subsample(reductor,reductor),
-            "reina_blanca": tk.PhotoImage(file="./assets/wq.png").subsample(reductor,reductor),
-            "reina_negra": tk.PhotoImage(file="./assets/bq.png").subsample(reductor,reductor),
-            "rey_blanco": tk.PhotoImage(file="./assets/wk.png").subsample(reductor,reductor),
-            "rey_negro": tk.PhotoImage(file="./assets/bk.png").subsample(reductor,reductor),
-            "peon_blanco": tk.PhotoImage(file="./assets/wp.png").subsample(reductor,reductor),
-            "peon_negro": tk.PhotoImage(file="./assets/bp.png").subsample(reductor,reductor),
+            "vacia": tk.PhotoImage(width=lado, height=lado),
+            "torre_blanca": tk.PhotoImage(file="./assets/wr.png").subsample(reductor, reductor),
+            "torre_negra": tk.PhotoImage(file="./assets/br.png").subsample(reductor, reductor),
+            "caballo_blanco": tk.PhotoImage(file="./assets/wn.png").subsample(reductor, reductor),
+            "caballo_negro": tk.PhotoImage(file="./assets/bn.png").subsample(reductor, reductor),
+            "alfil_blanco": tk.PhotoImage(file="./assets/wb.png").subsample(reductor, reductor),
+            "alfil_negro": tk.PhotoImage(file="./assets/bb.png").subsample(reductor, reductor),
+            "reina_blanca": tk.PhotoImage(file="./assets/wq.png").subsample(reductor, reductor),
+            "reina_negra": tk.PhotoImage(file="./assets/bq.png").subsample(reductor, reductor),
+            "rey_blanco": tk.PhotoImage(file="./assets/wk.png").subsample(reductor, reductor),
+            "rey_negro": tk.PhotoImage(file="./assets/bk.png").subsample(reductor, reductor),
+            "peon_blanco": tk.PhotoImage(file="./assets/wp.png").subsample(reductor, reductor),
+            "peon_negro": tk.PhotoImage(file="./assets/bp.png").subsample(reductor, reductor),
         }
 
-    def asignar_labels_imagenes(self,root):
+    def get_images_tk(self):
+        return self._images_tk;
+
+    def asignar_labels_imagenes(self, root, juego, jugador):
         for fila in self._casillas:
             for casilla in fila:
                 casilla.set_label(tk.Label(root, background=casilla.get_color(), borderwidth=1, relief="solid"))
                 if casilla.get_pieza() is None:
                     casilla.get_label()["image"] = self._images_tk['vacia']
-                    casilla.get_label().bind("<Button>", lambda event, casilla=casilla: self.click(casilla=casilla))
+                    casilla.get_label().bind(
+                        "<Button>",
+                        lambda event, casilla=casilla, juego=juego, jugador=jugador: self.click(casilla=casilla,
+                                                                                                juego=juego,
+                                                                                                jugador=jugador))
                 else:
                     casilla.get_pieza().set_image(self._images_tk[casilla.get_pieza().get_nombre()])
                     casilla.get_label()["image"] = casilla.get_pieza().get_image()
-                    casilla.get_label().bind("<Button>", lambda event, casilla=casilla: self.click(casilla=casilla))
-                casilla.get_label().grid(column=casilla.get_columna(), row=casilla.get_fila())
+                    casilla.get_label().bind(
+                        "<Button>",
+                        lambda event, casilla=casilla, juego=juego, jugador=jugador: self.click(casilla=casilla,
+                                                                                                juego=juego,
+                                                                                                jugador=jugador))
+                if self._vista_blanca:
+                    casilla.get_label().grid(column=casilla.get_columna(), row=casilla.get_fila())
+                else:
+                    casilla.get_label().grid(column=7 - casilla.get_columna(), row=7 - casilla.get_fila())
 
-    def dibujar_tablero(self):
+    def dibujar(self, juego, jugador):
         root = tk.Tk()
-        Casilla.Casilla.calcular_tamanio_lado(root)
+        Casilla.calcular_tamanio_lado(root)
 
         for i in range(8):
             root.columnconfigure(i)
             root.rowconfigure(i)
 
-        self.cargar_imagenes(Casilla.Casilla.lado)
-        self.asignar_labels_imagenes(root)
+        self.cargar_imagenes(Casilla.lado)
+        self.asignar_labels_imagenes(root, juego, jugador)
 
         root.mainloop()
 
-    def click(self, casilla):
+    def click(self, casilla, juego, jugador):
+
+        if juego.get_turno_blanco() != jugador.get_es_blanco():
+            return
+
         if self._casilla_seleccionada:
             if casilla in self._casillas_posibles_destino:
-                self.mover(casilla)
+                self.mover(casilla, juego)
                 self.cancelar_seleccion()
             else:
                 self.cancelar_seleccion()
@@ -107,7 +125,7 @@ class Tablero:
             if casilla.get_pieza() is not None:
                 self.seleccionar_casilla(casilla)
 
-    def seleccionar_casilla(self,casilla):
+    def seleccionar_casilla(self, casilla):
         self._casilla_seleccionada = casilla
         self._casillas_posibles_destino = casilla.get_pieza().get_posibles_casillas_destino(casilla, self._casillas)
         self.pintar_casillas()
@@ -128,7 +146,14 @@ class Tablero:
         for casilla in self._casillas_posibles_destino:
             casilla.get_label()["background"] = casilla.get_color()
 
-    def mover(self, casilla):
+    def mover(self, casilla, juego):
+
+        cambio = [
+            [self._casilla_seleccionada.get_fila(), self._casilla_seleccionada.get_columna()],
+            [casilla.get_fila(), casilla.get_columna()]
+        ]
+        juego.set_cambio(cambio)
+
         # Setea la nueva casilla
         casilla.get_label()["image"] = self._casilla_seleccionada.get_pieza().get_image()
         casilla.set_pieza(self._casilla_seleccionada.get_pieza())
@@ -139,3 +164,5 @@ class Tablero:
         # Vacía la casilla anterior
         self._casilla_seleccionada.get_label()["image"] = self._images_tk['vacia']
         self._casilla_seleccionada.set_pieza(None)
+
+        juego.set_turno_blanco(not juego.get_turno_blanco())

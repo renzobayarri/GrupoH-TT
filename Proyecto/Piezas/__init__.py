@@ -4,5 +4,6 @@ __all__ = [
     "Peon",
     "Reina",
     "Rey",
-    "Torre"
+    "Torre",
+    "Pieza"
 ]

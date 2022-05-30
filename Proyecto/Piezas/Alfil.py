@@ -1,7 +1,7 @@
-from Proyecto.Piezas import Pieza as P
+from .Pieza import Pieza
 
 
-class Alfil(P.Pieza):
+class Alfil(Pieza):
 
     def __init__(self, is_white):
         super().__init__(is_white)
