@@ -1,61 +1,39 @@
-import time
-from _thread import *
-
 from Juego import Juego
 from Jugador import Jugador
-import tkinter as tk
-import Cliente
 
-
-def click_nombre():
-    jugador.set_nombre(input_nombre.get())
-    ventana_inicial.destroy()
-
-
-def click_online():
-    ventana_modo.destroy()
-
-
-def crear_partida():
-    ventana_online.destroy()
-    start_new_thread(iniciar_servidor, ())
-    start_new_thread(iniciar_primer_cliente, (jugador, juego))
-
-def crear_cliente():
-    ventana_online.destroy()
-    start_new_thread(iniciar_primer_cliente, (jugador, juego))
-
-
-def iniciar_servidor():
-    import Server
-
-def iniciar_primer_cliente(jugador, juego):
-    Cliente.main(jugador, juego)
-
+from Intefaz import Interfaz
 
 juego = Juego()
 jugador = Jugador()
-ventana_inicial = tk.Tk()
-tk.Label(ventana_inicial, text="Nombre").pack()
-input_nombre = tk.Entry(ventana_inicial, takefocus=True)
-input_nombre.pack()
-tk.Button(ventana_inicial, text="Aceptar", command=click_nombre).pack()
-ventana_inicial.mainloop()
+interfaz = Interfaz(juego, jugador)
+interfaz.mostrar_ventana()
 
-ventana_modo = tk.Tk()
-tk.Button(ventana_modo, text="Jugador 1 VS CPU").pack()
-tk.Button(ventana_modo, text="Jugador 1 VS Jugador 2").pack()
-tk.Button(ventana_modo, text="Jugar Online", command=click_online).pack()
-ventana_modo.mainloop()
+if juego.get_modo() in ["entrenamiento", "vsCPU", "vsJug2"]:
+    otro_jugador = Jugador()
+    otro_jugador.set_nombre("Jugador 2")
+    otro_jugador.set_es_blanco(not jugador.get_es_blanco())
+    if otro_jugador.get_es_blanco():
+        juego.set_jugador_blanco(otro_jugador)
+    else:
+        juego.set_jugador_negro(otro_jugador)
 
-ventana_online = tk.Tk()
-tk.Button(ventana_online, text="Crear partida", command=crear_partida).pack()
-tk.Button(ventana_online, text="Unirse", command=crear_cliente).pack()
-ventana_online.mainloop()
+while jugador.get_es_blanco() == None:
+    print("Todavía no he elegido color")
 
-while jugador.get_es_blanco() is None:
-    time.sleep(1)
+while juego.get_jugador_blanco() == None:
+    print("No hay jugador blanco")
 
+while juego.get_jugador_negro() == None:
+    print("No hay jugador negro")
+
+while juego.get_jugador_blanco().get_nombre() == "":
+    print("Todavía no hay jugador blanco")
+
+while juego.get_jugador_negro().get_nombre() == "":
+    print("Todavía no hay jugador negro")
+
+print("Ya cumplí todos los requisitos")
+print(juego)
 juego.set_tablero(jugador.get_es_blanco())
 juego.get_tablero().crear_piezas_iniciales()
-juego.get_tablero().dibujar(juego,jugador)
+juego.get_tablero().dibujar(juego, jugador)

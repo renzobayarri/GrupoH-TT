@@ -11,7 +11,7 @@ class Juego:
         self._jugador_negro = None
         self._turno_blanco = True
         self._tablero = None
-        self._modo = None
+        self._modo = None # entrenamiento, vsCPU, vsJug2, online
         self._cambio = None
 
     def get_jugador_blanco(self):
