@@ -2,10 +2,7 @@ import socket
 from _thread import *
 import pickle
 
-# casa
-server = "192.168.0.107"
-# oficina
-# server = "172.22.37.65"
+server = ""
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
