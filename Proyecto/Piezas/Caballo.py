@@ -1,7 +1,7 @@
-from Proyecto.Piezas import Pieza as P
+from .Pieza import Pieza
 
 
-class Caballo(P.Pieza):
+class Caballo(Pieza):
 
     def __init__(self, is_white):
         super().__init__(is_white)
@@ -31,6 +31,3 @@ class Caballo(P.Pieza):
                 pass
 
         return casillas_destino
-
-
-

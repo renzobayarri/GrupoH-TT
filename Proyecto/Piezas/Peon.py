@@ -1,7 +1,7 @@
-from Proyecto.Piezas import Pieza as P
+from .Pieza import Pieza
 
 
-class Peon(P.Pieza):
+class Peon(Pieza):
 
     def __init__(self, is_white):
         super().__init__(is_white)
@@ -16,6 +16,7 @@ class Peon(P.Pieza):
 
     def get_posibles_casillas_destino(self, casilla, casillas):
         direccion = -1 if self.get_is_white() else 1 # Si son blancas, se mueven hacia filas con indice menor ( 7 a 0)
+
         casillas_destino = []
 
         fila = casilla.get_fila()
