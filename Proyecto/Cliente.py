@@ -3,7 +3,7 @@ from Jugador import Jugador
 import tkinter as tk
 from Piezas import *
 
-# El anfitrion tiene juego y jugador completos, el invitado todavía no sabe el color
+
 def main(jugador, juego):
     run = True
     n = Network(jugador.get_nombre())
@@ -20,18 +20,7 @@ def main(jugador, juego):
             else:
                 n.get_info_juego()["piezas-disponibles"].remove("N")
                 juego.set_jugador_blanco(otroJugador)
-            """        
-        if len(n.get_info_juego()["piezas-disponibles"]) == 2:
-            elegir_color(jugador)
-            if jugador.get_es_blanco():
-                n.get_info_juego()["piezas-disponibles"].remove("B")
-                juego.set_jugador_blanco(jugador)
-                juego.set_jugador_negro(otroJugador)
-            else:
-                n.get_info_juego()["piezas-disponibles"].remove("N")
-                juego.set_jugador_negro(jugador)
-                juego.set_jugador_blanco(otroJugador)
-            """
+
             otroJugador.set_es_blanco(not jugador.get_es_blanco())
 
             n.send(n.get_info_juego())
@@ -82,24 +71,6 @@ def main(jugador, juego):
             n.get_info_juego()["cambios"] = juego.get_cambio()
             n.send(n.get_info_juego())
 
-"""
-def elegir_color(jugador):
-    ventana_color = tk.Tk()
-    btn_blancas = tk.Button(
-        ventana_color, text="Blancas",
-            command=lambda blancas =True, jugador=jugador, ventana=ventana_color: click_color(blancas, jugador, ventana))
-    btn_negras = tk.Button(
-        ventana_color, text="Negras",
-        command=lambda blancas=False, jugador=jugador, ventana=ventana_color: click_color(blancas, jugador, ventana))
-    btn_blancas.pack()
-    btn_negras.pack()
-    ventana_color.mainloop()
-
-
-def click_color(blancas, jugador, ventana):
-    ventana.destroy()
-    jugador.set_es_blanco(blancas)
-"""
 def registrar_cambios(juego):
 
     fila_columna_origen, fila_columna_destino = juego.get_cambio()

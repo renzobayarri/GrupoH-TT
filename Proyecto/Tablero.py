@@ -121,30 +121,6 @@ class Tablero:
                         self.cancelar_seleccion()
                         return
 
-
-        # Si no es mi turno, no tengo que seleccionar ninguna pieza salvo en los siguientes modos:
-        # Solo seleccionar si es mi turno
-
-        # Entrenamiento
-            # seleccionar casilla no importa el turno
-            # cualquier color de pieza
-
-        # vsCPU
-            # solo seleccionar casilla si es mi turno
-            # color de la pieza == color del turno
-
-        # vsJug2
-            # color de la pieza == color del turno
-
-        # online
-            # Solo seleccionar casilla si es mi turno
-            # color de la pieza == color del turno
-
-        """if juego.get_modo() == "online":
-            if self._casilla_seleccionada is None:
-                if casilla.get_pieza() is not None and casilla.get_pieza().get_is_white() != jugador.get_es_blanco():
-                    return
-        """
         if self._casilla_seleccionada:
             if casilla in self._casillas_posibles_destino:
                 self.mover(casilla, juego)

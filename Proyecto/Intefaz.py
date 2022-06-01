@@ -37,7 +37,7 @@ class Interfaz:
         tk.Button(self._ventana, text="Entrenamiento", command=self.click_entrenamiento).pack()
         tk.Button(self._ventana, text="Jugador 1 VS CPU", command=self.click_vsCPU).pack()
         tk.Button(self._ventana, text="Jugador 1 VS Jugador 2", command=self.click_vsJug2).pack()
-        tk.Button(self._ventana, text="Jugar Online", command=self.click_online).pack()
+        tk.Button(self._ventana, text="Online", command=self.click_online).pack()
         tk.Button(self._ventana, text="Volver", command=self.volver_a_nombre).pack()
 
     def volver_a_nombre(self):
