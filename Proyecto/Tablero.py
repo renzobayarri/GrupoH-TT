@@ -195,4 +195,26 @@ class Tablero:
             isinstance(lista[0], Alfil.Alfil) or isinstance(lista[1], Alfil.Alfil) or isinstance(lista[2], Alfil.Alfil):
                 return True
         elif len(lista) == 4:
-            pass
+
+            alfil_blanco = False
+            alfil_negro = False
+            for pieza in juego.get_piezas_restantes():
+                if isinstance(pieza, Alfil.Alfil):
+                    if pieza.get_is_white():
+                        alfil_blanco = True
+                    else:
+                        alfil_negro = True
+
+            return alfil_blanco and alfil_negro
+
+            caballo_blanco = 0
+            caballo_negro = 0
+
+            for pieza in juego.get_piezas_restantes():
+                if isinstance(pieza, Caballo.Caballo):
+                    if pieza.get_is_white():
+                        caballo_blanco = caballo_blanco + 1
+                    else:
+                        caballo_negro = caballo_negro + 1
+            return caballo_negro == 2 or caballo_blanco == 2
+        
