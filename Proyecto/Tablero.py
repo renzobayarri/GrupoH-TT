@@ -199,7 +199,7 @@ class Tablero:
             alfil_blanco = False
             alfil_negro = False
             for pieza in juego.get_piezas_restantes():
-                if isinstance(lista[pieza], Alfil.Alfil):
+                if isinstance(pieza, Alfil.Alfil):
                     if pieza.get_is_white():
                         alfil_blanco = True
                     else:
@@ -211,9 +211,10 @@ class Tablero:
             caballo_negro = 0
 
             for pieza in juego.get_piezas_restantes():
-                if isinstance(lista[pieza], Caballo.Caballo):
+                if isinstance(pieza, Caballo.Caballo):
                     if pieza.get_is_white():
                         caballo_blanco = caballo_blanco + 1
                     else:
                         caballo_negro = caballo_negro + 1
             return caballo_negro == 2 or caballo_blanco == 2
+        
