@@ -28,4 +28,12 @@ while juego.get_jugador_negro() == None:
 
 while juego.get_jugador_blanco().get_nombre() == "":
     print("Todavía no hay jugador blanco")
-Me
+
+while juego.get_jugador_negro().get_nombre() == "":
+    print("Todavía no hay jugador negro")
+
+print("Ya cumplí todos los requisitos")
+
+juego.set_tablero(jugador.get_es_blanco())
+juego.get_tablero().crear_piezas_iniciales(juego)
+juego.get_tablero().dibujar(juego, jugador)
