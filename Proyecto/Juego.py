@@ -10,6 +10,10 @@ class Juego:
         self._tablero = None
         self._modo = None  # entrenamiento, vsCPU, vsJug2, online
         self._cambio = None
+        self._piezas_restantes = []
+        self._piezas_eliminadas = []
+
+
 
     def get_jugador_blanco(self):
         return self._jugador_blanco
@@ -46,3 +50,15 @@ class Juego:
 
     def set_cambio(self, cambio):
         self._cambio = cambio
+
+    def get_piezas_restantes(self):
+        return self._piezas_restantes
+
+    def set_piezas_restantes(self, piezas_restantes):
+        self._piezas_restantes = piezas_restantes
+
+    def get_piezas_eliminadas(self):
+        return self._piezas_eliminadas
+
+    def set_piezas_eliminadas(self, piezas_eliminadas):
+        self._piezas_eliminadas = piezas_eliminadas

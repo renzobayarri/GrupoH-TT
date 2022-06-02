@@ -22,7 +22,7 @@ class Tablero:
     def get_casillas(self):
         return self._casillas
 
-    def crear_piezas_iniciales(self):
+    def crear_piezas_iniciales(self, juego):
 
         for fila in range(8):
             if fila in (2, 5):
@@ -47,6 +47,10 @@ class Tablero:
                         self._casillas[fila][columna].set_pieza(Rey.Rey(blanca))
                 elif fila == 1 or fila == 6:
                     self._casillas[fila][columna].set_pieza(Peon.Peon(blanca))
+
+                if self._casillas[fila][columna].get_pieza() is not None:
+                    juego.get_piezas_restantes().append(self._casillas[fila][columna].get_pieza())
+
 
     def cargar_imagenes(self, lado):
 
@@ -162,6 +166,11 @@ class Tablero:
         ]
         juego.set_cambio(cambio)
 
+        if casilla.get_pieza() is not None:
+            juego.get_piezas_eliminadas().append(casilla.get_pieza())
+            juego.get_piezas_restantes().remove(casilla.get_pieza())
+
+
         # Setea la nueva casilla
         casilla.get_label()["image"] = self._casilla_seleccionada.get_pieza().get_image()
         casilla.set_pieza(self._casilla_seleccionada.get_pieza())
@@ -174,3 +183,16 @@ class Tablero:
         self._casilla_seleccionada.set_pieza(None)
 
         juego.set_turno_blanco(not juego.get_turno_blanco())
+
+    def validar_tablas_insuficiencia(self, juego):
+        lista = juego.get_piezas_restantes()
+
+        if len(lista) == 2:
+            if isinstance(lista[0], Rey.Rey) and isinstance(lista[1], Rey.Rey):
+                return True
+        elif len(lista) == 3:
+            if isinstance(lista[0], Caballo.Caballo) or isinstance(lista[1], Caballo.Caballo) or isinstance(lista[2], Caballo.Caballo) or \
+            isinstance(lista[0], Alfil.Alfil) or isinstance(lista[1], Alfil.Alfil) or isinstance(lista[2], Alfil.Alfil):
+                return True
+        elif len(lista) == 4:
+            pass
