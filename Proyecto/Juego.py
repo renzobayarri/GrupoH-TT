@@ -9,11 +9,10 @@ class Juego:
         self._turno_blanco = True
         self._tablero = None
         self._modo = None  # entrenamiento, vsCPU, vsJug2, online
-        self._cambio = None
+        self._cambio = []
         self._piezas_restantes = []
         self._piezas_eliminadas = []
-
-
+        self._ultima_pieza_movida = None
 
     def get_jugador_blanco(self):
         return self._jugador_blanco
@@ -62,3 +61,9 @@ class Juego:
 
     def set_piezas_eliminadas(self, piezas_eliminadas):
         self._piezas_eliminadas = piezas_eliminadas
+
+    def get_ultima_pieza_movida(self):
+        return self._ultima_pieza_movida
+
+    def set_ultima_pieza_movida(self, pieza):
+        self._ultima_pieza_movida = pieza
