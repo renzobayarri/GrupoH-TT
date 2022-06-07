@@ -43,3 +43,11 @@ class Peon(Pieza):
                 casillas_destino.append(c)
 
         return casillas_destino
+
+"""
+    def coronar(self, casilla, casillas):
+
+        if casilla.get_columna == 0 or casilla.get_columna == 7:
+            casilla.get_pieza()
+            
+"""

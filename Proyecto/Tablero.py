@@ -1,7 +1,7 @@
 from Piezas import *
 from Casilla import Casilla
 import tkinter as tk
-
+from tkinter import ttk
 
 class Tablero:
 
@@ -10,6 +10,7 @@ class Tablero:
         self._casilla_seleccionada = None
         self._casillas_posibles_destino = []
         self._vista_blanca = vista_blanca
+        self._coronar_peon = "caballo"
 
         for fila in range(8):
             filas = []
@@ -182,6 +183,7 @@ class Tablero:
         self._casilla_seleccionada.get_label()["image"] = self._images_tk['vacia']
         self._casilla_seleccionada.set_pieza(None)
 
+
         juego.set_turno_blanco(not juego.get_turno_blanco())
 
     def validar_tablas_insuficiencia(self, juego):
@@ -199,7 +201,7 @@ class Tablero:
             alfil_blanco = False
             alfil_negro = False
             for pieza in juego.get_piezas_restantes():
-                if isinstance(lista[pieza], Alfil.Alfil):
+                if isinstance(pieza, Alfil.Alfil):
                     if pieza.get_is_white():
                         alfil_blanco = True
                     else:
@@ -211,9 +213,116 @@ class Tablero:
             caballo_negro = 0
 
             for pieza in juego.get_piezas_restantes():
-                if isinstance(lista[pieza], Caballo.Caballo):
+                if isinstance(pieza, Caballo.Caballo):
                     if pieza.get_is_white():
                         caballo_blanco = caballo_blanco + 1
                     else:
                         caballo_negro = caballo_negro + 1
             return caballo_negro == 2 or caballo_blanco == 2
+
+    def coronar(self, casilla):
+        fila = casilla.get_fila()
+        if fila == 0 or fila == 7:
+            if casilla.get_pieza().get_nombre() == "peon_blanco" or casilla.get_pieza().get_nombre() == "peon_negro":
+                ventana = tk.Tk()
+                ventana.geometry("200x150")
+                ventana.title("Coronar peon")
+                ventana.rowconfigure(0, weight= 1)
+                ventana.rowconfigure(1, weight=1)
+                ventana.rowconfigure(2, weight=1)
+                ventana.rowconfigure(3, weight=1)
+                ventana.columnconfigure(0, weight=1)
+                #ventana.iconbitmap(file="./assets/bb.png")
+                reina = ttk.Button(ventana, text="Reina", command=self.coronar_tipo_reina)
+                torre = ttk.Button(ventana, text="Torre", command=self.coronar_tipo_torre)
+                alfil = ttk.Button(ventana, text="Alfil", command=self.coronar_tipo_alfil)
+                caballo = ttk.Button(ventana, text="Caballo", command=self.coronar_tipo_caballo)
+                reina.grid(row=0, column=0, sticky="NSWE")
+                torre.grid(row=1, column=0, sticky="NSWE")
+                alfil.grid(row=2, column=0, sticky="NSWE")
+                caballo.grid(row=3, column=0, sticky="NSWE")
+                ventana.mainloop()
+            casilla.set_pieza(self.cambiar_peon(casilla, self._coronar_peon))
+            return casilla
+
+    def coronar_tipo_reina(self):
+        self._coronar_peon = "reina"
+        print(self._coronar_peon)
+
+    def coronar_tipo_torre(self):
+        self._coronar_peon = "torre"
+        print(self._coronar_peon)
+
+    def coronar_tipo_alfil(self):
+        self._coronar_peon = "alfil"
+        print(self._coronar_peon)
+
+    def coronar_tipo_caballo(self):
+        self._coronar_peon = "caballo"
+        print(self._coronar_peon)
+
+    def Coronar_reina(self, casilla):
+        if (casilla.get_pieza().get_is_white()):
+            casilla.set_pieza(Torre.Torre(True))
+            casilla.get_pieza().set_image(self._images_tk["torre_blanca"])
+        else:
+            casilla.set_pieza(Torre.Torre(False))
+            casilla.get_pieza().set_image(self._images_tk["torre_negra"])
+
+    def Coronar_torre(self, casilla):
+        if(casilla.get_pieza().get_is_white()):
+            casilla.set_pieza(Torre.Torre(True))
+            casilla.get_pieza().set_image(self._images_tk["torre_blanca"])
+        else:
+            casilla.set_pieza(Torre.Torre(False))
+            casilla.get_pieza().set_image(self._images_tk["torre_negra"])
+
+    def Coronar_alfil(self, casilla):
+        if(casilla.get_pieza().get_is_white()):
+            casilla.set_pieza(Alfil.Alfil(True))
+            casilla.get_pieza().set_image(self._images_tk["alfil_blanco"])
+        else:
+            casilla.set_pieza(Alfil.Alfil(False))
+            casilla.get_pieza().set_image(self._images_tk["alfil_negro"])
+
+    def Coronar_caballo(self, casilla):
+        if(casilla.get_pieza().get_is_white()):
+            casilla.set_pieza(Caballo.Caballo(True))
+            casilla.get_pieza().set_image(self._images_tk["caballo_blanco"])
+        else:
+            casilla.set_pieza(Caballo.Caballo(False))
+            casilla.get_pieza().set_image(self._images_tk["caballo_negro"])
+
+    def cambiar_peon(self, casilla, text):
+        if(casilla.get_pieza().get_is_white()):
+            if(text == "reina"):
+                casilla.set_pieza(Reina.Reina(True))
+                casilla.get_pieza().set_image(self._images_tk["reina_blanca"])
+            if (text == "torre"):
+                casilla.set_pieza(Torre.Torre(True))
+                casilla.get_pieza().set_image(self._images_tk["torre_blanca"])
+            if (text == "alfil"):
+                casilla.set_pieza(Alfil.Alfil(True))
+                casilla.get_pieza().set_image(self._images_tk["alfil_blanco"])
+                print("entro")
+            if (text == "caballo"):
+                casilla.set_pieza(Caballo.Caballo(True))
+                casilla.get_pieza().set_image(self._images_tk["caballo_blanco"])
+        else:
+            if (text == "reina"):
+                casilla.set_pieza(Reina.Reina(False))
+                casilla.get_pieza().set_image(self._images_tk["reina_negra"])
+            if (text == "torre"):
+                casilla.set_pieza(Torre.Torre(False))
+                casilla.get_pieza().set_image(self._images_tk["torre_negra"])
+            if (text == "alfil"):
+                casilla.set_pieza(Alfil.Alfil(False))
+                casilla.get_pieza().set_image(self._images_tk["alfil_negro"])
+            if (text == "caballo"):
+                casilla.set_pieza(Caballo.Caballo(False))
+                casilla.get_pieza().set_image(self._images_tk["caballo_negro"])
+        return casilla
+
+
+
+
