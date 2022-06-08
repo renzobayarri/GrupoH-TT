@@ -3,9 +3,9 @@ from .Pieza import Pieza
 
 class Torre(Pieza):
 
-    def __init__(self, is_white):
-        super().__init__(is_white)
-        self._nombre = "torre_blanca" if is_white else "torre_negra"
+    def __init__(self, es_blanco):
+        super().__init__(es_blanco)
+        self._nombre = "torre_blanca" if es_blanco else "torre_negra"
 
     def get_posibles_casillas_destino(self, casilla, casillas):
 
@@ -26,7 +26,7 @@ class Torre(Pieza):
                     if not fila + fila_mv < 0 and not fila + fila_mv > 7 and not columna + columna_mv < 0 and not columna + columna_mv > 7:
                         c = casillas[fila + fila_mv][columna + columna_mv]
                         if c.get_pieza() is not None:
-                            if c.get_pieza().get_is_white() != casilla.get_pieza().get_is_white():
+                            if c.get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca():
                                 casillas_destino.append(c)
                             break
                         else:

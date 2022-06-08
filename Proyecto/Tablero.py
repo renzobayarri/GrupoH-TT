@@ -10,6 +10,8 @@ class Tablero:
         self._casilla_seleccionada = None
         self._casillas_posibles_destino = []
         self._vista_blanca = vista_blanca
+        self._info_enroque = []
+        self._info_peon_al_paso = []
 
         for fila in range(8):
             filas = []
@@ -120,26 +122,59 @@ class Tablero:
 
         if juego.get_modo() != "entrenamiento":
             if casilla.get_pieza() is not None:
-                if casilla.get_pieza().get_is_white() != juego.get_turno_blanco():
+                if casilla.get_pieza().get_es_blanca() != juego.get_turno_blanco():
                     if casilla not in self._casillas_posibles_destino:
                         self.cancelar_seleccion()
                         return
 
         if self._casilla_seleccionada:
             if casilla in self._casillas_posibles_destino:
-                self.mover(casilla, juego)
+                self.mover(self._casilla_seleccionada, casilla, juego)
+                juego.set_turno_blanco(not juego.get_turno_blanco())
                 self.cancelar_seleccion()
             else:
-                self.cancelar_seleccion()
-                if casilla.get_pieza() is not None:
-                    self.seleccionar_casilla(casilla)
+                if self._info_enroque:
+                    hacer_enroque = False
+                    for enroque in self._info_enroque:
+                        if casilla == enroque["origen-torre"]:
+                            self.mover(self._casilla_seleccionada, enroque["destino-rey"], juego)
+                            self.mover(enroque["origen-torre"], enroque["destino-torre"], juego)
+                            self.cancelar_seleccion()
+                            juego.set_turno_blanco(not juego.get_turno_blanco())
+                            hacer_enroque = True
+                    if not hacer_enroque:
+                        self.cancelar_seleccion()
+                        if casilla.get_pieza() is not None:
+                            self.seleccionar_casilla(casilla, juego)
+                else:
+                    if self._info_peon_al_paso:
+                        hacer_movimiento = False
+                        for peon_al_paso in self._info_peon_al_paso:
+                            if casilla == peon_al_paso["destino-peon"]:
+                                self.mover(self._casilla_seleccionada, peon_al_paso["peon-comible"], juego)
+                                self.mover(peon_al_paso["peon-comible"], peon_al_paso["destino-peon"], juego)
+                                self.cancelar_seleccion()
+                                juego.set_turno_blanco(not juego.get_turno_blanco())
+                                hacer_movimiento = True
+                        if not hacer_movimiento:
+                            self.cancelar_seleccion()
+                            if casilla.get_pieza() is not None:
+                                self.seleccionar_casilla(casilla, juego)
+                    else:
+                        self.cancelar_seleccion()
+                        if casilla.get_pieza() is not None:
+                            self.seleccionar_casilla(casilla, juego)
         else:
             if casilla.get_pieza() is not None:
-                self.seleccionar_casilla(casilla)
+                self.seleccionar_casilla(casilla, juego)
 
-    def seleccionar_casilla(self, casilla):
+    def seleccionar_casilla(self, casilla, juego):
         self._casilla_seleccionada = casilla
         self._casillas_posibles_destino = casilla.get_pieza().get_posibles_casillas_destino(casilla, self._casillas)
+        if isinstance(casilla.get_pieza(), Rey.Rey):
+            self._info_enroque = casilla.get_pieza().get_datos_enroque(casilla, self._casillas)
+        if isinstance(casilla.get_pieza(), Peon.Peon):
+            self._info_peon_al_paso = casilla.get_pieza().get_info_al_paso(casilla, self._casillas, juego.get_ultima_pieza_movida())
         self.pintar_casillas()
 
     def pintar_casillas(self):
@@ -148,41 +183,54 @@ class Tablero:
                 casilla.get_label()["background"] = "coral1"
             else:
                 casilla.get_label()["background"] = "khaki"
+        if self._info_enroque:
+            for enroque in self._info_enroque:
+                enroque["origen-torre"].get_label()["background"] = "purple"
+        if self._info_peon_al_paso:
+            for peon_al_paso in self._info_peon_al_paso:
+                peon_al_paso["destino-peon"].get_label()["background"] = "purple"
 
     def cancelar_seleccion(self):
         self.despintar_casillas()
         self._casillas_posibles_destino = []
+        self._info_enroque = []
+        self._info_peon_al_paso = []
         self._casilla_seleccionada = None
 
     def despintar_casillas(self):
         for casilla in self._casillas_posibles_destino:
             casilla.get_label()["background"] = casilla.get_color()
+        if self._info_enroque:
+            for enroque in self._info_enroque:
+                enroque["origen-torre"].get_label()["background"] = enroque["origen-torre"].get_color()
+        if self._info_peon_al_paso:
+            for peon_al_paso in self._info_peon_al_paso:
+                peon_al_paso["destino-peon"].get_label()["background"] = peon_al_paso["destino-peon"].get_color()
 
-    def mover(self, casilla, juego):
+    def mover(self, origen, destino, juego):
+
 
         cambio = [
-            [self._casilla_seleccionada.get_fila(), self._casilla_seleccionada.get_columna()],
-            [casilla.get_fila(), casilla.get_columna()]
-        ]
-        juego.set_cambio(cambio)
+                [origen.get_fila(), origen.get_columna()],
+                [destino.get_fila(), destino.get_columna()]
+            ]
+        juego.get_cambio().append(cambio)
 
-        if casilla.get_pieza() is not None:
-            juego.get_piezas_eliminadas().append(casilla.get_pieza())
-            juego.get_piezas_restantes().remove(casilla.get_pieza())
-
+        if destino.get_pieza() is not None:
+            juego.get_piezas_eliminadas().append(destino.get_pieza())
+            juego.get_piezas_restantes().remove(destino.get_pieza())
 
         # Setea la nueva casilla
-        casilla.get_label()["image"] = self._casilla_seleccionada.get_pieza().get_image()
-        casilla.set_pieza(self._casilla_seleccionada.get_pieza())
+        destino.get_label()["image"] = origen.get_pieza().get_image()
+        destino.set_pieza(origen.get_pieza())
 
-        if isinstance(self._casilla_seleccionada.get_pieza(), Peon.Peon):
-            self._casilla_seleccionada.get_pieza().set_primera_jugada(False)
+        origen.get_pieza().aumentar_cantidad_movimientos()
+        juego.set_ultima_pieza_movida(self._casilla_seleccionada.get_pieza())
 
         # Vacía la casilla anterior
-        self._casilla_seleccionada.get_label()["image"] = self._images_tk['vacia']
-        self._casilla_seleccionada.set_pieza(None)
+        origen.get_label()["image"] = self._images_tk['vacia']
+        origen.set_pieza(None)
 
-        juego.set_turno_blanco(not juego.get_turno_blanco())
 
     def validar_tablas_insuficiencia(self, juego):
         lista = juego.get_piezas_restantes()
@@ -217,4 +265,3 @@ class Tablero:
                     else:
                         caballo_negro = caballo_negro + 1
             return caballo_negro == 2 or caballo_blanco == 2
-        
