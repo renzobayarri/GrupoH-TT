@@ -265,21 +265,3 @@ class Tablero:
                     else:
                         caballo_negro = caballo_negro + 1
             return caballo_negro == 2 or caballo_blanco == 2
-
-    def mover_sin_controles(self, origen, destino, juego):
-
-        cambio_individual = [
-            [origen.get_fila(), origen.get_columna()],
-            [destino.get_fila(), destino.get_columna()]
-        ]
-        juego.get_cambio().append(cambio_individual)
-
-        destino.get_label()["image"] = origen.get_pieza().get_image()
-        destino.set_pieza(origen.get_pieza())
-
-        origen.get_pieza().aumentar_cantidad_movimientos()
-        juego.set_ultima_pieza_movida(origen.get_pieza())
-
-        origen.get_label()["image"] = self._images_tk['vacia']
-        origen.set_pieza(None)
-
