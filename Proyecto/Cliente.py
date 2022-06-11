@@ -1,7 +1,5 @@
 from Network import Network
 from Jugador import Jugador
-import tkinter as tk
-from Piezas import *
 
 
 def main(jugador, juego):
@@ -73,16 +71,18 @@ def main(jugador, juego):
 
 def registrar_cambios(juego):
 
-    fila_columna_origen, fila_columna_destino = juego.get_cambio()
-    casilla_origen = juego.get_tablero().get_casillas()[fila_columna_origen[0]][fila_columna_origen[1]]
-    casilla_destino = juego.get_tablero().get_casillas()[fila_columna_destino[0]][fila_columna_destino[1]]
+    for movimiento in juego.get_cambio():
 
-    casilla_destino.get_label()["image"] = casilla_origen.get_pieza().get_image()
-    casilla_destino.set_pieza(casilla_origen.get_pieza())
+        fila_columna_origen, fila_columna_destino = movimiento
+        casilla_origen = juego.get_tablero().get_casillas()[fila_columna_origen[0]][fila_columna_origen[1]]
+        casilla_destino = juego.get_tablero().get_casillas()[fila_columna_destino[0]][fila_columna_destino[1]]
 
-    if isinstance(casilla_origen.get_pieza(), Peon.Peon):
-        casilla_origen.get_pieza().set_primera_jugada(False)
+        casilla_destino.get_label()["image"] = casilla_origen.get_pieza().get_image()
+        casilla_destino.set_pieza(casilla_origen.get_pieza())
 
-    casilla_origen.get_label()["image"] = juego.get_tablero().get_images_tk()["vacia"]
-    casilla_origen.set_pieza(None)
+        casilla_origen.get_pieza().aumentar_cantidad_movimientos()
+        juego.set_ultima_pieza_movida(casilla_origen.get_pieza())
+
+        casilla_origen.get_label()["image"] = juego.get_tablero().get_images_tk()["vacia"]
+        casilla_origen.set_pieza(None)
 

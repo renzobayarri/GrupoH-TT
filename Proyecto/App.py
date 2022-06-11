@@ -1,6 +1,5 @@
 from Juego import Juego
 from Jugador import Jugador
-
 from Intefaz import Interfaz
 
 juego = Juego()
