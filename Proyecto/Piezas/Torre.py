@@ -14,6 +14,8 @@ class Torre(Pieza):
         fila = casilla.get_fila()
         columna = casilla.get_columna()
 
+        casillas = juego.get_tablero().get_casillas()
+
         direcciones = [[(1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (6, 0), (7, 0)],
                        [(-1, 0), (-2, 0), (-3, 0), (-4, 0), (-5, 0), (-6, 0), (-7, 0)],
                        [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7)],
@@ -27,10 +29,12 @@ class Torre(Pieza):
                         c = casillas[fila + fila_mv][columna + columna_mv]
                         if c.get_pieza() is not None:
                             if c.get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca():
-                                casillas_destino.append(c)
+                                if self.no_deja_rey_en_jaque(casilla, c, juego):
+                                    casillas_destino.append(c)
                             break
                         else:
-                            casillas_destino.append(c)
+                            if self.no_deja_rey_en_jaque(casilla, c, juego):
+                                casillas_destino.append(c)
                 except IndexError:
                     pass
 
