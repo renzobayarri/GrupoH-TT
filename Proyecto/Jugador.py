@@ -5,6 +5,7 @@ class Jugador:
     def __init__(self):
         self._nombre = ""
         self._es_blanco = None
+        self._casilla_rey = None
         self._tiempo_restante = None
 
     def get_nombre(self):
@@ -18,6 +19,12 @@ class Jugador:
 
     def set_es_blanco(self, es_blanco):
         self._es_blanco = es_blanco
+
+    def get_casilla_rey(self):
+        return self._casilla_rey
+
+    def set_casilla_rey(self, casilla):
+        self._casilla_rey = casilla
 
     def get_tiempo_restante(self):
         return self._tiempo_restante
