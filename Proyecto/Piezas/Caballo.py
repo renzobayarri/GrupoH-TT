@@ -14,10 +14,12 @@ class Caballo(Pieza):
             return False
         return True
 
-    def get_posibles_casillas_destino(self, casilla, casillas):
+    def get_posibles_casillas_destino(self, casilla, juego):
         casillas_destino = []
         fila = casilla.get_fila()
         columna = casilla.get_columna()
+
+        casillas = juego.get_tablero().get_casillas()
 
         direcciones = [(-2, 1), (-2, -1), (2, 1), (2, -1), (-1, 2), (-1, -2), (1, 2), (1, -2)]
         
@@ -26,8 +28,9 @@ class Caballo(Pieza):
                 if fila + direcciones[i][0] >= 0 and fila + direcciones[i][0] <= 7 and columna + direcciones[i][1] >= 0 and columna + direcciones[i][1] <= 7:
                     c = casillas[fila + direcciones[i][0]][columna + direcciones[i][1]]
                     if self.is_edible(c):
-                        casillas_destino.append(c)
-            except IndexError as e:
+                        if self.no_deja_rey_en_jaque(casilla, c, juego):
+                            casillas_destino.append(c)
+            except IndexError:
                 pass
 
         return casillas_destino

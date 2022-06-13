@@ -7,12 +7,14 @@ class Alfil(Pieza):
         super().__init__(es_blanca)
         self._nombre = "alfil_blanco" if es_blanca else "alfil_negro"
 
-    def get_posibles_casillas_destino(self,casilla,casillas):
+    def get_posibles_casillas_destino(self,casilla,casillas,juego):
 
             casillas_destino = []
 
             fila = casilla.get_fila()
             columna = casilla.get_columna()
+
+            casillas = juego.get_tablero().get_casillas()
 
             direcciones = [[(1, -1), (2, -2), (3, -3), (4, -4), (5, -5), (6, -6), (7, -7)],
                            [(-1, 1), (-2, 2), (-3, 3), (-4, 4), (-5, 5), (-6, 6), (-7, 7)],
@@ -27,10 +29,12 @@ class Alfil(Pieza):
                             c = casillas[fila + fila_mv][columna + columna_mv]
                             if c.get_pieza() is not None:
                                 if c.get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca():
-                                    casillas_destino.append(c)
+                                    if self.no_deja_rey_en_jaque(casilla, c, juego):
+                                        casillas_destino.append(c)
                                 break
                             else:
-                                casillas_destino.append(c)
+                                if self.no_deja_rey_en_jaque(casilla, c, juego):
+                                    casillas_destino.append(c)
                     except IndexError:
                         pass
 
