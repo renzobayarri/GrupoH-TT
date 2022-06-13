@@ -19,7 +19,8 @@ info_juego = {
     "turno-blancas": True,
     "piezas-disponibles": ["B", "N"],
     "jugadores": [],
-    "cambios": []
+    "cambios": [],
+    "pieza_promocion": None
 }
 
 def threaded_client(conn):
@@ -35,7 +36,7 @@ def threaded_client(conn):
                 info_juego["piezas-disponibles"] = datos_recibidos["piezas-disponibles"]
                 info_juego["jugadores"] = datos_recibidos["jugadores"]
                 info_juego["cambios"] = datos_recibidos["cambios"]
-
+                info_juego["pieza-promocion"] = datos_recibidos["pieza-promocion"]
                 if not datos_recibidos:
                     print("Disconnected")
                     break

@@ -1,5 +1,6 @@
 from Network import Network
 from Jugador import Jugador
+from Piezas import Rey, Peon
 
 
 def main(jugador, juego):
@@ -55,9 +56,13 @@ def main(jugador, juego):
             n.set_info_juego(recibido)
             if n.get_info_juego()["cambios"] != []:
                 juego.set_cambio(n.get_info_juego()["cambios"])
+                juego.get_tablero().set_pieza_promocion(n.get_info_juego()["pieza-promocion"])
                 registrar_cambios(juego)
                 n.get_info_juego()["cambios"] = []
+                n.get_info_juego()["pieza-promocion"] = None
+                juego.get_tablero().set_pieza_promocion(None)
                 juego.set_cambio([])
+            juego.get_tablero().verificar_jaque(juego)
             juego.set_turno_blanco(jugador.get_es_blanco())
 
         if n.get_info_juego()["turno-blancas"] == jugador.get_es_blanco():
@@ -67,6 +72,7 @@ def main(jugador, juego):
 
             n.get_info_juego()["turno-blancas"] = juego.get_turno_blanco()
             n.get_info_juego()["cambios"] = juego.get_cambio()
+            n.get_info_juego()["pieza-promocion"] = juego.get_tablero().get_pieza_promocion()
             n.send(n.get_info_juego())
 
 def registrar_cambios(juego):
@@ -83,6 +89,23 @@ def registrar_cambios(juego):
         casilla_origen.get_pieza().aumentar_cantidad_movimientos()
         juego.set_ultima_pieza_movida(casilla_origen.get_pieza())
 
+        if isinstance(casilla_origen.get_pieza(), Rey.Rey):
+            casilla_origen.get_label()["background"] = casilla_origen.get_color()
+            if casilla_origen.get_pieza().get_es_blanca():
+                juego.get_jugador_blanco().set_casilla_rey(casilla_destino)
+            else:
+                juego.get_jugador_negro().set_casilla_rey(casilla_destino)
+
         casilla_origen.get_label()["image"] = juego.get_tablero().get_images_tk()["vacia"]
         casilla_origen.set_pieza(None)
+
+        if isinstance(casilla_destino.get_pieza(), Peon.Peon):
+            if casilla_destino.get_fila() == 0 or casilla_destino.get_fila() == 7:
+                juego.get_piezas_restantes().remove(casilla_destino.get_pieza())
+                nueva_pieza = juego.get_tablero().get_pieza_promocion()(casilla_destino.get_pieza().get_es_blanca())
+                nueva_pieza.set_image(juego.get_tablero().get_images_tk()[nueva_pieza.get_nombre()])
+                juego.get_piezas_restantes().append(nueva_pieza)
+                casilla_destino.set_pieza(nueva_pieza)
+                casilla_destino.get_label()["image"] = nueva_pieza.get_image()
+
 
