@@ -7,7 +7,7 @@ class Alfil(Pieza):
         super().__init__(es_blanca)
         self._nombre = "alfil_blanco" if es_blanca else "alfil_negro"
 
-    def get_posibles_casillas_destino(self,casilla,juego):
+    def get_posibles_casillas_destino(self,casilla,casillas,juego):
 
             casillas_destino = []
 
