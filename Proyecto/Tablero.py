@@ -259,9 +259,6 @@ class Tablero:
         origen.get_label()["image"] = self._images_tk['vacia']
         origen.set_pieza(None)
 
-        juego.set_turno_blanco(not juego.get_turno_blanco())
-
-
     def validar_tablas_insuficiencia(self, juego):
         lista = juego.get_piezas_restantes()
 
