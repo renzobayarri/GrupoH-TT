@@ -12,7 +12,7 @@ class Rey(Pieza):
         super().__init__(es_blanco)
         self._nombre = "rey_blanco" if es_blanco else "rey_negro"
 
-    def get_posibles_casillas_destino(self, casilla, casillas):
+    def get_posibles_casillas_destino(self, casilla, juego):
         casillas_destino = []
 
         fila = casilla.get_fila()
@@ -40,7 +40,7 @@ class Rey(Pieza):
 
         return casillas_destino
 
-    def get_datos_enroque(self, casilla, casillas):
+    def get_datos_enroque(self, casilla, juego):
         datos_enroque = []
 
         direcciones = [
@@ -69,8 +69,8 @@ class Rey(Pieza):
                         if c.get_pieza() is not None and isinstance(c.get_pieza(), Torre) and not c.get_pieza().get_cantidad_movimientos():
                             enroque = {
                                 "origen-torre": c,
-                                "destino-torre" : casillas[fila][columna+col-2] if col > 0 else casillas[fila][columna+col+3],
-                                "destino-rey" : casillas[fila][columna+col-1] if col > 0 else casillas[fila][columna+col+2]
+                                "destino-torre": casillas[fila][columna+col-2] if col > 0 else casillas[fila][columna+col+3],
+                                "destino-rey": casillas[fila][columna+col-1] if col > 0 else casillas[fila][columna+col+2]
                             }
                             if not self.esta_en_jaque_en_camino(casilla, enroque, juego):
                                 datos_enroque.append(enroque)
@@ -91,7 +91,7 @@ class Rey(Pieza):
                     if c.get_pieza() is not None and c.get_pieza().get_es_blanca() != self.get_es_blanca() \
                             and isinstance(c.get_pieza(), Caballo):
                         return True
-            except IndexError as e:
+            except IndexError:
                 pass
 
         # Simular movimientos alfil
@@ -111,7 +111,7 @@ class Rey(Pieza):
                                 return True
                             else:
                                 break
-                except IndexError as e:
+                except IndexError:
                     pass
 
         # Simular movimientos torre:
@@ -187,6 +187,3 @@ class Rey(Pieza):
         self.revertir_movimiento(casilla, enroque["destino-torre"], juego, None, ultima_movida, True)
 
         return rey_en_jaque
-
-
-

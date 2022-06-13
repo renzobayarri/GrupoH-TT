@@ -7,7 +7,7 @@ class Torre(Pieza):
         super().__init__(es_blanco)
         self._nombre = "torre_blanca" if es_blanco else "torre_negra"
 
-    def get_posibles_casillas_destino(self, casilla, casillas):
+    def get_posibles_casillas_destino(self, casilla, juego):
 
         casillas_destino = []
 

@@ -6,7 +6,7 @@ class Reina(Pieza):
         super().__init__(es_blanca)
         self._nombre = "reina_blanca" if es_blanca else "reina_negra"
 
-    def get_posibles_casillas_destino(self, casilla, casillas):
+    def get_posibles_casillas_destino(self, casilla, juego):
         casillas_destino = []
 
         fila = casilla.get_fila()
@@ -32,7 +32,7 @@ class Reina(Pieza):
                             if c.get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca():
                                 if self.no_deja_rey_en_jaque(casilla, c, juego):
                                     casillas_destino.append(c)
-                                break
+                            break
                         else:
                             if self.no_deja_rey_en_jaque(casilla, c, juego):
                                 casillas_destino.append(c)

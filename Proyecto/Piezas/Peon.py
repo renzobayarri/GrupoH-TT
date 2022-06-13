@@ -7,7 +7,7 @@ class Peon(Pieza):
         super().__init__(es_blanco)
         self._nombre = "peon_blanco" if es_blanco else "peon_negro"
 
-    def get_posibles_casillas_destino(self, casilla, casillas):
+    def get_posibles_casillas_destino(self, casilla, juego):
         direccion = -1 if self.get_es_blanca() else 1  # Si son blancas, se mueven hacia filas con indice menor ( 7 a 0)
 
         casillas_destino = []
@@ -45,7 +45,7 @@ class Peon(Pieza):
 
         return casillas_destino
 
-    def get_info_al_paso(self, casilla, casillas, ultima_pieza):
+    def get_info_al_paso(self, casilla, juego):
         info = []
         casillas = juego.get_tablero().get_casillas()
         ultima_pieza = juego.get_ultima_pieza_movida()
