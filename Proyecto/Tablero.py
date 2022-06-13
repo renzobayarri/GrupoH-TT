@@ -10,9 +10,9 @@ class Tablero:
         self._casilla_seleccionada = None
         self._casillas_posibles_destino = []
         self._vista_blanca = vista_blanca
-        self._coronar_peon = "caballo"
         self._info_enroque = []
         self._info_peon_al_paso = []
+        self._pieza_promocion = None;
 
         for fila in range(8):
             filas = []
@@ -24,6 +24,12 @@ class Tablero:
 
     def get_casillas(self):
         return self._casillas
+
+    def set_pieza_promocion(self, pieza):
+        self._pieza_promocion = pieza
+
+    def get_pieza_promocion(self):
+        return self._pieza_promocion
 
     def crear_piezas_iniciales(self, juego):
 
@@ -131,6 +137,8 @@ class Tablero:
         if self._casilla_seleccionada:
             if casilla in self._casillas_posibles_destino:
                 self.mover(self._casilla_seleccionada, casilla, juego)
+                if isinstance(casilla.get_pieza(), Peon.Peon) and (casilla.get_fila() == 0 or casilla.get_fila() == 7):
+                    self.coronar(casilla, juego)
                 juego.set_turno_blanco(not juego.get_turno_blanco())
                 self.cancelar_seleccion()
             else:
@@ -270,7 +278,7 @@ class Tablero:
             return caballo_negro == 2 or caballo_blanco == 2
 
 
-    def coronar(self, casilla):
+    def coronar(self, casilla, juego):
         fila = casilla.get_fila()
         if fila == 0 or fila == 7:
             if casilla.get_pieza().get_nombre() == "peon_blanco" or casilla.get_pieza().get_nombre() == "peon_negro":
@@ -283,94 +291,59 @@ class Tablero:
                 ventana.rowconfigure(3, weight=1)
                 ventana.columnconfigure(0, weight=1)
                 #ventana.iconbitmap(file="./assets/bb.png")
-                reina = ttk.Button(ventana, text="Reina", command=self.coronar_tipo_reina)
-                torre = ttk.Button(ventana, text="Torre", command=self.coronar_tipo_torre)
-                alfil = ttk.Button(ventana, text="Alfil", command=self.coronar_tipo_alfil)
-                caballo = ttk.Button(ventana, text="Caballo", command=self.coronar_tipo_caballo)
+                reina = tk.Button(
+                    ventana,
+                    text="Reina",
+                    command=lambda ventana=ventana,
+                                   pieza=Reina.Reina,
+                                   blanca=casilla.get_pieza().get_es_blanca(),
+                                   casilla=casilla,
+                                   juego=juego: self.cambiar_pieza(clase=pieza, blanca=blanca, casilla=casilla,
+                                                                   ventana=ventana, juego=juego))
+                torre = tk.Button(
+                    ventana,
+                    text="Torre",
+                    command=lambda ventana=ventana,
+                                   pieza=Torre.Torre,
+                                   blanca=casilla.get_pieza().get_es_blanca(),
+                                   casilla=casilla,
+                                   juego=juego: self.cambiar_pieza(clase=pieza, blanca=blanca, casilla=casilla,
+                                                                   ventana=ventana, juego=juego))
+                alfil = tk.Button(
+                    ventana, text="Alfil",
+                    command=lambda ventana=ventana,
+                                   pieza=Alfil.Alfil,
+                                   blanca=casilla.get_pieza().get_es_blanca(),
+                                   casilla=casilla,
+                                   juego=juego: self.cambiar_pieza(clase=pieza, blanca=blanca, casilla=casilla,
+                                                                   ventana=ventana, juego=juego))
+                caballo = tk.Button(
+                    ventana,
+                    text="Caballo",
+                    command=lambda ventana=ventana,
+                                   pieza=Caballo.Caballo,
+                                   blanca=casilla.get_pieza().get_es_blanca(),
+                                   casilla=casilla,
+                                   juego=juego: self.cambiar_pieza(clase=pieza, blanca=blanca, casilla=casilla,
+                                                                   ventana=ventana, juego=juego))
                 reina.grid(row=0, column=0, sticky="NSWE")
                 torre.grid(row=1, column=0, sticky="NSWE")
                 alfil.grid(row=2, column=0, sticky="NSWE")
                 caballo.grid(row=3, column=0, sticky="NSWE")
                 ventana.mainloop()
-            casilla.set_pieza(self.cambiar_peon(casilla, self._coronar_peon))
-            return casilla
-
-    def coronar_tipo_reina(self):
-        self._coronar_peon = "reina"
-        print(self._coronar_peon)
-
-    def coronar_tipo_torre(self):
-        self._coronar_peon = "torre"
-        print(self._coronar_peon)
-
-    def coronar_tipo_alfil(self):
-        self._coronar_peon = "alfil"
-        print(self._coronar_peon)
-
-    def coronar_tipo_caballo(self):
-        self._coronar_peon = "caballo"
-        print(self._coronar_peon)
-
-    def Coronar_reina(self, casilla):
-        if (casilla.get_pieza().get_is_white()):
-            casilla.set_pieza(Torre.Torre(True))
-            casilla.get_pieza().set_image(self._images_tk["torre_blanca"])
-        else:
-            casilla.set_pieza(Torre.Torre(False))
-            casilla.get_pieza().set_image(self._images_tk["torre_negra"])
-
-    def Coronar_torre(self, casilla):
-        if(casilla.get_pieza().get_is_white()):
-            casilla.set_pieza(Torre.Torre(True))
-            casilla.get_pieza().set_image(self._images_tk["torre_blanca"])
-        else:
-            casilla.set_pieza(Torre.Torre(False))
-            casilla.get_pieza().set_image(self._images_tk["torre_negra"])
-
-    def Coronar_alfil(self, casilla):
-        if(casilla.get_pieza().get_is_white()):
-            casilla.set_pieza(Alfil.Alfil(True))
-            casilla.get_pieza().set_image(self._images_tk["alfil_blanco"])
-        else:
-            casilla.set_pieza(Alfil.Alfil(False))
-            casilla.get_pieza().set_image(self._images_tk["alfil_negro"])
-
-    def Coronar_caballo(self, casilla):
-        if(casilla.get_pieza().get_is_white()):
-            casilla.set_pieza(Caballo.Caballo(True))
-            casilla.get_pieza().set_image(self._images_tk["caballo_blanco"])
-        else:
-            casilla.set_pieza(Caballo.Caballo(False))
-            casilla.get_pieza().set_image(self._images_tk["caballo_negro"])
-
-    def cambiar_peon(self, casilla, text):
-        if(casilla.get_pieza().get_is_white()):
-            if(text == "reina"):
-                casilla.set_pieza(Reina.Reina(True))
-                casilla.get_pieza().set_image(self._images_tk["reina_blanca"])
-            if (text == "torre"):
-                casilla.set_pieza(Torre.Torre(True))
-                casilla.get_pieza().set_image(self._images_tk["torre_blanca"])
-            if (text == "alfil"):
-                casilla.set_pieza(Alfil.Alfil(True))
-                casilla.get_pieza().set_image(self._images_tk["alfil_blanco"])
-                print("entro")
-            if (text == "caballo"):
-                casilla.set_pieza(Caballo.Caballo(True))
-                casilla.get_pieza().set_image(self._images_tk["caballo_blanco"])
-        else:
-            if (text == "reina"):
-                casilla.set_pieza(Reina.Reina(False))
-                casilla.get_pieza().set_image(self._images_tk["reina_negra"])
-            if (text == "torre"):
-                casilla.set_pieza(Torre.Torre(False))
-                casilla.get_pieza().set_image(self._images_tk["torre_negra"])
-            if (text == "alfil"):
-                casilla.set_pieza(Alfil.Alfil(False))
-                casilla.get_pieza().set_image(self._images_tk["alfil_negro"])
-            if (text == "caballo"):
-                casilla.set_pieza(Caballo.Caballo(False))
-                casilla.get_pieza().set_image(self._images_tk["caballo_negro"])
-        return casilla
 
 
+    def cambiar_pieza(self, clase, blanca, casilla, ventana, juego):
+        juego.get_piezas_restantes().remove(casilla.get_pieza())
+        nueva_pieza = clase(blanca)
+        nueva_pieza.set_image(self._images_tk[nueva_pieza.get_nombre()])
+        casilla.set_pieza(nueva_pieza)
+        casilla.get_label()["image"] = nueva_pieza.get_image()
+        ventana.destroy()
+        juego.get_piezas_restantes().append(nueva_pieza)
+        self.set_pieza_promocion(clase)
+        self.verificar_jaque(juego)
+        if self.es_tabla(juego):
+            print("tablas")
+        juego.set_turno_blanco(not juego.get_turno_blanco())
+        self.cancelar_seleccion()
