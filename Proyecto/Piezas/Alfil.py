@@ -7,7 +7,7 @@ class Alfil(Pieza):
         super().__init__(es_blanca)
         self._nombre = "alfil_blanco" if es_blanca else "alfil_negro"
 
-    def get_posibles_casillas_destino(self,casilla,casillas):
+    def get_posibles_casillas_destino(self,casilla,casillas,juego):
 
             casillas_destino = []
 
@@ -31,7 +31,7 @@ class Alfil(Pieza):
                                 if c.get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca():
                                     if self.no_deja_rey_en_jaque(casilla, c, juego):
                                         casillas_destino.append(c)
-                                    break
+                                break
                             else:
                                 if self.no_deja_rey_en_jaque(casilla, c, juego):
                                     casillas_destino.append(c)
