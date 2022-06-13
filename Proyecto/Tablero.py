@@ -85,6 +85,10 @@ class Tablero:
         return self._images_tk;
 
     def asignar_labels_imagenes(self, root, juego, jugador):
+
+        juego.get_jugador_blanco().set_casilla_rey(self._casillas[7][4])
+        juego.get_jugador_negro().set_casilla_rey(self._casillas[0][4])
+
         for fila in self._casillas:
             for casilla in fila:
                 casilla.set_label(tk.Label(root, background=casilla.get_color(), borderwidth=1, relief="solid"))
@@ -139,6 +143,9 @@ class Tablero:
                 self.mover(self._casilla_seleccionada, casilla, juego)
                 if isinstance(casilla.get_pieza(), Peon.Peon) and (casilla.get_fila() == 0 or casilla.get_fila() == 7):
                     self.coronar(casilla, juego)
+                self.verificar_jaque(juego)
+                if self.es_tabla(juego):
+                    print("tablas")
                 juego.set_turno_blanco(not juego.get_turno_blanco())
                 self.cancelar_seleccion()
             else:
@@ -151,6 +158,9 @@ class Tablero:
                             self.cancelar_seleccion()
                             juego.set_turno_blanco(not juego.get_turno_blanco())
                             hacer_enroque = True
+                            self.verificar_jaque(juego)
+                            if self.es_tabla(juego):
+                                print("tablas")
                     if not hacer_enroque:
                         self.cancelar_seleccion()
                         if casilla.get_pieza() is not None:
@@ -165,6 +175,9 @@ class Tablero:
                                 self.cancelar_seleccion()
                                 juego.set_turno_blanco(not juego.get_turno_blanco())
                                 hacer_movimiento = True
+                                self.verificar_jaque(juego)
+                                if self.es_tabla(juego):
+                                    print("tablas")
                         if not hacer_movimiento:
                             self.cancelar_seleccion()
                             if casilla.get_pieza() is not None:
@@ -179,11 +192,11 @@ class Tablero:
 
     def seleccionar_casilla(self, casilla, juego):
         self._casilla_seleccionada = casilla
-        self._casillas_posibles_destino = casilla.get_pieza().get_posibles_casillas_destino(casilla, self._casillas)
+        self._casillas_posibles_destino = casilla.get_pieza().get_posibles_casillas_destino(casilla, juego)
         if isinstance(casilla.get_pieza(), Rey.Rey):
-            self._info_enroque = casilla.get_pieza().get_datos_enroque(casilla, self._casillas)
+            self._info_enroque = casilla.get_pieza().get_datos_enroque(casilla, juego)
         if isinstance(casilla.get_pieza(), Peon.Peon):
-            self._info_peon_al_paso = casilla.get_pieza().get_info_al_paso(casilla, self._casillas, juego.get_ultima_pieza_movida())
+            self._info_peon_al_paso = casilla.get_pieza().get_info_al_paso(casilla, juego)
         self.pintar_casillas()
 
     def pintar_casillas(self):
@@ -234,8 +247,14 @@ class Tablero:
         destino.set_pieza(origen.get_pieza())
 
         origen.get_pieza().aumentar_cantidad_movimientos()
-        juego.set_ultima_pieza_movida(self._casilla_seleccionada.get_pieza())
+        juego.set_ultima_pieza_movida(origen.get_pieza())
 
+        if isinstance(origen.get_pieza(), Rey.Rey):
+            origen.get_label()["background"] = origen.get_color()
+            if origen.get_pieza().get_es_blanca():
+                juego.get_jugador_blanco().set_casilla_rey(destino)
+            else:
+                juego.get_jugador_negro().set_casilla_rey(destino)
         # Vacía la casilla anterior
         origen.get_label()["image"] = self._images_tk['vacia']
         origen.set_pieza(None)
@@ -256,41 +275,86 @@ class Tablero:
             alfil_negro = False
             for pieza in juego.get_piezas_restantes():
                 if isinstance(pieza, Alfil.Alfil):
-                    if pieza.get_is_white():
+                    if pieza.get_es_blanca():
                         alfil_blanco = True
                     else:
                         alfil_negro = True
-
-            return alfil_blanco and alfil_negro
 
             caballo_blanco = 0
             caballo_negro = 0
 
             for pieza in juego.get_piezas_restantes():
                 if isinstance(pieza, Caballo.Caballo):
-                    if pieza.get_is_white():
+                    if pieza.get_es_blanca():
                         caballo_blanco = caballo_blanco + 1
                     else:
                         caballo_negro = caballo_negro + 1
-            return caballo_negro == 2 or caballo_blanco == 2
+            return (alfil_blanco and alfil_negro) or (caballo_negro == 2 or caballo_blanco == 2)
 
+    def es_tablas_por_ahogamiento(self, juego):
+
+        return self.no_hay_movimientos(juego.get_turno_blanco(), juego)
+
+    def verificar_jaque(self, juego):
+
+        jugadores = [juego.get_jugador_blanco(), juego.get_jugador_negro()]
+
+        for jugador in jugadores:
+            if jugador.get_casilla_rey().get_pieza().esta_en_jaque(jugador.get_casilla_rey(), self._casillas):
+                self.pintar_jaque(jugador.get_casilla_rey())
+                if self.no_hay_movimientos(jugador.get_es_blanco(), juego):
+                    jugador.get_casilla_rey().get_label()["background"] = "red"
+            else:
+                self.despintar_jaque(jugador.get_casilla_rey())
+
+    def pintar_jaque(self, casilla):
+        casilla.get_label()["background"] = "coral1"
+
+    def despintar_jaque(self, casilla):
+        casilla.get_label()["background"] = casilla.get_color()
+
+    def no_hay_movimientos(self, blancas, juego):
+
+        casillas = juego.get_tablero().get_casillas()
+        for fila in range(8):
+            for columna in range(8):
+                if casillas[fila][columna].get_pieza() is not None:
+                    if casillas[fila][columna].get_pieza().get_es_blanca() == blancas:
+                        posiblidades = casillas[fila][columna].get_pieza().get_posibles_casillas_destino(
+                            casillas[fila][columna], juego)
+                        if posiblidades:
+                            return False
+        return True
 
     def coronar(self, casilla, juego):
+        global img
         fila = casilla.get_fila()
         if fila == 0 or fila == 7:
             if casilla.get_pieza().get_nombre() == "peon_blanco" or casilla.get_pieza().get_nombre() == "peon_negro":
-                ventana = tk.Tk()
-                ventana.geometry("200x150")
+                ventana = tk.Toplevel()
+                ventana.geometry("150x600")
                 ventana.title("Coronar peon")
                 ventana.rowconfigure(0, weight= 1)
                 ventana.rowconfigure(1, weight=1)
                 ventana.rowconfigure(2, weight=1)
                 ventana.rowconfigure(3, weight=1)
                 ventana.columnconfigure(0, weight=1)
+                if casilla.get_pieza().get_es_blanca():
+                    img1 = tk.PhotoImage(file="./assets/wk.png")
+                    img2 = tk.PhotoImage(file="./assets/wr.png")
+                    img3 = tk.PhotoImage(file="./assets/wb.png")
+                    img4 = tk.PhotoImage(file="./assets/wn.png")
+                else:
+                    img1 = tk.PhotoImage(file="./assets/bk.png")
+                    img2 = tk.PhotoImage(file="./assets/br.png")
+                    img3 = tk.PhotoImage(file="./assets/bb.png")
+                    img4 = tk.PhotoImage(file="./assets/bn.png")
                 #ventana.iconbitmap(file="./assets/bb.png")
+
                 reina = tk.Button(
                     ventana,
-                    text="Reina",
+                    #text="Reina",
+                    image= img1,
                     command=lambda ventana=ventana,
                                    pieza=Reina.Reina,
                                    blanca=casilla.get_pieza().get_es_blanca(),
@@ -300,6 +364,7 @@ class Tablero:
                 torre = tk.Button(
                     ventana,
                     text="Torre",
+                    image=img2,
                     command=lambda ventana=ventana,
                                    pieza=Torre.Torre,
                                    blanca=casilla.get_pieza().get_es_blanca(),
@@ -308,6 +373,7 @@ class Tablero:
                                                                    ventana=ventana, juego=juego))
                 alfil = tk.Button(
                     ventana, text="Alfil",
+                    image=img3,
                     command=lambda ventana=ventana,
                                    pieza=Alfil.Alfil,
                                    blanca=casilla.get_pieza().get_es_blanca(),
@@ -317,16 +383,22 @@ class Tablero:
                 caballo = tk.Button(
                     ventana,
                     text="Caballo",
+                    image=img4,
                     command=lambda ventana=ventana,
                                    pieza=Caballo.Caballo,
                                    blanca=casilla.get_pieza().get_es_blanca(),
                                    casilla=casilla,
                                    juego=juego: self.cambiar_pieza(clase=pieza, blanca=blanca, casilla=casilla,
                                                                    ventana=ventana, juego=juego))
-                reina.grid(row=0, column=0, sticky="NSWE")
-                torre.grid(row=1, column=0, sticky="NSWE")
-                alfil.grid(row=2, column=0, sticky="NSWE")
-                caballo.grid(row=3, column=0, sticky="NSWE")
+                #reina.grid(row=0, column=0, sticky="NSWE")
+                #torre.grid(row=1, column=0, sticky="NSWE")
+                #alfil.grid(row=2, column=0, sticky="NSWE")
+                #caballo.grid(row=3, column=0, sticky="NSWE")
+                reina.pack()
+                torre.pack()
+                alfil.pack()
+                caballo.pack()
+                img.pack()
                 ventana.mainloop()
 
 
@@ -344,3 +416,6 @@ class Tablero:
             print("tablas")
         juego.set_turno_blanco(not juego.get_turno_blanco())
         self.cancelar_seleccion()
+
+    def es_tabla(self, juego):
+        return self.es_tablas_por_ahogamiento(juego) or self.validar_tablas_insuficiencia(juego)
