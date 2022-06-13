@@ -340,12 +340,12 @@ class Tablero:
                 ventana.rowconfigure(3, weight=1)
                 ventana.columnconfigure(0, weight=1)
                 if casilla.get_pieza().get_es_blanca():
-                    img1 = tk.PhotoImage(file="./assets/wk.png")
+                    img1 = tk.PhotoImage(file="./assets/wq.png")
                     img2 = tk.PhotoImage(file="./assets/wr.png")
                     img3 = tk.PhotoImage(file="./assets/wb.png")
                     img4 = tk.PhotoImage(file="./assets/wn.png")
                 else:
-                    img1 = tk.PhotoImage(file="./assets/bk.png")
+                    img1 = tk.PhotoImage(file="./assets/bq.png")
                     img2 = tk.PhotoImage(file="./assets/br.png")
                     img3 = tk.PhotoImage(file="./assets/bb.png")
                     img4 = tk.PhotoImage(file="./assets/bn.png")
@@ -398,7 +398,6 @@ class Tablero:
                 torre.pack()
                 alfil.pack()
                 caballo.pack()
-                img.pack()
                 ventana.mainloop()
 
 

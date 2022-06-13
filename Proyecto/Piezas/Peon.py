@@ -64,16 +64,17 @@ class Peon(Pieza):
 
         for direccion in direcciones:
             fila_mv, columna_mv = direccion
-            if casillas[fila][columna + columna_mv].get_pieza() is not None \
-                and casillas[fila][columna + columna_mv].get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca() \
-                and casillas[fila][columna + columna_mv].get_pieza().get_cantidad_movimientos() == 1 \
-                    and casillas[fila][columna + columna_mv].get_pieza() == ultima_pieza:
-                        peon_al_paso = {}
-                        peon_al_paso["origen-peon"] = casilla
-                        peon_al_paso["peon-comible"] = casillas[fila][columna + columna_mv]
-                        peon_al_paso["destino-peon"] = casillas[fila + fila_mv][columna + columna_mv]
-                        if self.peon_al_paso_no_deja_rey_en_jaque(peon_al_paso, juego):
-                            info.append(peon_al_paso)
+            if 0 <= columna + columna_mv <= 7:
+                if casillas[fila][columna + columna_mv].get_pieza() is not None \
+                    and casillas[fila][columna + columna_mv].get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca() \
+                    and casillas[fila][columna + columna_mv].get_pieza().get_cantidad_movimientos() == 1 \
+                        and casillas[fila][columna + columna_mv].get_pieza() == ultima_pieza:
+                            peon_al_paso = {}
+                            peon_al_paso["origen-peon"] = casilla
+                            peon_al_paso["peon-comible"] = casillas[fila][columna + columna_mv]
+                            peon_al_paso["destino-peon"] = casillas[fila + fila_mv][columna + columna_mv]
+                            if self.peon_al_paso_no_deja_rey_en_jaque(peon_al_paso, juego):
+                                info.append(peon_al_paso)
 
         return info
 
