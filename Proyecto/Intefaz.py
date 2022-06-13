@@ -12,7 +12,7 @@ class Interfaz:
         self._juego = juego
         self._jugador = jugador
         self._continuar_juego = continuar_juego
-        self._ventana.title("Ajedrez Claciso")
+        self._ventana.title("Ajedrez Clasico")
         self.ingreso_nombre()
 
     def ingreso_nombre(self):
@@ -130,7 +130,7 @@ class Interfaz:
 
     def iniciar_cliente(self):
         start_new_thread(Cliente.main, (self._jugador, self._juego))
-        self._continuar_juego
+        self._continuar_juego()
 
     def mostrar_ventana(self):
         self._ventana.mainloop()
