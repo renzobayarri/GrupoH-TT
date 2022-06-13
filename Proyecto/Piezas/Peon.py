@@ -65,3 +65,4 @@ class Peon(Pieza):
                         info.append(peon_al_paso)
 
         return info
+
