@@ -2,7 +2,7 @@ import socket
 from _thread import *
 import pickle
 
-server = ""
+server = "192.168.0.103"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,7 +20,7 @@ info_juego = {
     "piezas-disponibles": ["B", "N"],
     "jugadores": [],
     "cambios": [],
-    "pieza_promocion": None
+    "pieza-promocion": None
 }
 
 def threaded_client(conn):

@@ -13,6 +13,7 @@ class Juego:
         self._piezas_restantes = []
         self._piezas_eliminadas = []
         self._ultima_pieza_movida = None
+        self._terminado = False
 
     def get_jugador_blanco(self):
         return self._jugador_blanco
@@ -67,3 +68,9 @@ class Juego:
 
     def set_ultima_pieza_movida(self, pieza):
         self._ultima_pieza_movida = pieza
+
+    def get_terminado(self):
+        return self._terminado
+
+    def set_terminado(self, terminado):
+        self._terminado = terminado
