@@ -33,8 +33,12 @@ def continuar_juego():
     juego.get_tablero().crear_piezas_iniciales(juego)
     juego.get_tablero().dibujar(juego, jugador)
 
+while True:
+    juego = Juego()
+    jugador = Jugador()
+    interfaz = Interfaz(juego, jugador, continuar_juego)
+    interfaz.mostrar_ventana()
+    del juego
+    del jugador
+    del interfaz
 
-juego = Juego()
-jugador = Jugador()
-interfaz = Interfaz(juego, jugador, continuar_juego)
-interfaz.mostrar_ventana()

@@ -62,8 +62,8 @@ def main(jugador, juego):
                 n.get_info_juego()["pieza-promocion"] = None
                 juego.get_tablero().set_pieza_promocion(None)
                 juego.set_cambio([])
-            juego.get_tablero().verificar_jaque(juego)
-            juego.set_turno_blanco(jugador.get_es_blanco())
+                juego.get_tablero().validar_jaques_y_tablas(juego, jugador, True)
+                juego.set_turno_blanco(jugador.get_es_blanco())
 
         if n.get_info_juego()["turno-blancas"] == jugador.get_es_blanco():
 
@@ -82,6 +82,9 @@ def registrar_cambios(juego):
         fila_columna_origen, fila_columna_destino = movimiento
         casilla_origen = juego.get_tablero().get_casillas()[fila_columna_origen[0]][fila_columna_origen[1]]
         casilla_destino = juego.get_tablero().get_casillas()[fila_columna_destino[0]][fila_columna_destino[1]]
+
+        if casilla_destino.get_pieza() is not None:
+            juego.get_piezas_restantes().remove(casilla_destino.get_pieza())
 
         casilla_destino.get_label()["image"] = casilla_origen.get_pieza().get_image()
         casilla_destino.set_pieza(casilla_origen.get_pieza())

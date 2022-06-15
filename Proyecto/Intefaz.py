@@ -12,7 +12,7 @@ class Interfaz:
         self._juego = juego
         self._jugador = jugador
         self._continuar_juego = continuar_juego
-        self._ventana.title("Ajedrez Clasico")
+        self._ventana.title("Ajedrez Clásico")
         self.ingreso_nombre()
 
     def ingreso_nombre(self):
@@ -27,6 +27,10 @@ class Interfaz:
             self._ventana, text="Aceptar",
             command=self.click_nombre)
         btn_ingresa_nombre.pack()
+        btn_salir = tk.Button(self._ventana, text="Salir", command=self.salir).pack()
+
+    def salir(self):
+        quit()
 
     def click_nombre(self):
         elementos = self._ventana.pack_slaves()
@@ -35,7 +39,7 @@ class Interfaz:
             for elemento in elementos:
                 if elemento._name == '!label2':
                     elemento["text"] = ""
-            self._jugador.set_nombre(self._nombre_ingresado.get())
+            self._jugador.set_nombre(self._nombre_ingresado.get().capitalize())
             self.limpiar_ventana()
             self.mostrar_modos_juego()
         else:

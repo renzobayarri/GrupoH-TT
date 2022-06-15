@@ -20,7 +20,7 @@ info_juego = {
     "piezas-disponibles": ["B", "N"],
     "jugadores": [],
     "cambios": [],
-    "pieza_promocion": None
+    "pieza-promocion": None
 }
 
 def threaded_client(conn):
