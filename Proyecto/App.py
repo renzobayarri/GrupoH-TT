@@ -3,6 +3,7 @@ from Jugador import Jugador
 from Intefaz import Interfaz
 
 def continuar_juego():
+    tiempo_maximo = 100000000
     if juego.get_modo() in ["entrenamiento", "vsCPU", "vsJug2"]:
         otro_jugador = Jugador()
         otro_jugador.set_nombre("Jugador 2")
@@ -12,22 +13,53 @@ def continuar_juego():
         else:
             juego.set_jugador_negro(otro_jugador)
 
+    i = 0
     while jugador.get_es_blanco() == None:
-        print("Todavía no he elegido color")
+        if i == 0:
+            pass
+            # print("Elegir color")
+        if i == tiempo_maximo:
+            print("Hubo algún problema. Intente nuevamente")
+            exit()
+        i += 1
 
+    i = 0
     while juego.get_jugador_blanco() == None:
-        print("No hay jugador blanco")
+        if i == 0:
+            print("Esperando al jugador blanco")
+        elif i == tiempo_maximo:
+            print("Hubo algún problema. Intente nuevamente")
+            exit()
+        i += 1
 
+    i = 0
     while juego.get_jugador_negro() == None:
-        print("No hay jugador negro")
+        if i == 0:
+            print("Esperando al jugador negro")
+        elif i == tiempo_maximo:
+            print("Tiempo de espera máximo excedido. Intente nuevamente")
+            exit()
+        i += 1
 
+    i = 0
     while juego.get_jugador_blanco().get_nombre() == "":
-        print("Todavía no hay jugador blanco")
+        if i == 0:
+            print("Esperando al jugador blanco")
+        elif i == tiempo_maximo:
+            print("Tiempo de espera máximo excedido. Intente nuevamente")
+            exit()
+        i += 1
 
+    i = 0
     while juego.get_jugador_negro().get_nombre() == "":
-        print("Todavía no hay jugador negro")
+        if i == 0:
+            print("Esperando al jugador negro")
+        elif i == tiempo_maximo:
+            print("Tiempo de espera máximo excedido. Intente nuevamente")
+            exit()
+        i += 1
 
-    print("Ya cumplí todos los requisitos")
+    print("Todo listo para jugar!")
 
     juego.set_tablero(jugador.get_es_blanco())
     juego.get_tablero().crear_piezas_iniciales(juego)

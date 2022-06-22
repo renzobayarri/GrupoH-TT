@@ -3,9 +3,9 @@ import pickle
 
 
 class Network:
-    def __init__(self, nombre):
+    def __init__(self, nombre, server):
         self._client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._server = ""
+        self._server = server
         self._port = 5555
         self._addr = (self._server, self._port)
         self._nombre = nombre
@@ -14,14 +14,20 @@ class Network:
 
     def connect(self):
         dato_recibido = None
+        i = 0
         while dato_recibido == None:
             try:
-                print("Conectando con servidor...")
+                if i == 0:
+                    print("Conectando con servidor... " + self._server)
+                elif i == 300:
+                    print("No se pudo conectar al servidor. Verifique la IP ingresada y su conexión a la red local")
+                    exit()
                 self._client.connect(self._addr)
                 print("Conectado")
                 dato_recibido = pickle.loads(self._client.recv(2048))
                 return dato_recibido
             except:
+                i += 1
                 pass
 
     def send(self, data):
