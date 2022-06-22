@@ -68,7 +68,8 @@ class Peon(Pieza):
                 if casillas[fila][columna + columna_mv].get_pieza() is not None \
                     and casillas[fila][columna + columna_mv].get_pieza().get_es_blanca() != casilla.get_pieza().get_es_blanca() \
                     and casillas[fila][columna + columna_mv].get_pieza().get_cantidad_movimientos() == 1 \
-                        and casillas[fila][columna + columna_mv].get_pieza() == ultima_pieza:
+                        and casillas[fila][columna + columna_mv].get_pieza() == ultima_pieza \
+                        and isinstance(casillas[fila][columna + columna_mv].get_pieza(), Peon):
                             peon_al_paso = {}
                             peon_al_paso["origen-peon"] = casilla
                             peon_al_paso["peon-comible"] = casillas[fila][columna + columna_mv]
@@ -102,4 +103,3 @@ class Peon(Pieza):
                                  ultima_movida, False)
 
         return no_deja_rey_en_jaque
-

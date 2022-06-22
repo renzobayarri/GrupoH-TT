@@ -3,9 +3,9 @@ import pickle
 
 
 class Network:
-    def __init__(self, nombre):
+    def __init__(self, nombre, server):
         self._client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._server = "192.168.0.103"
+        self._server = server
         self._port = 5555
         self._addr = (self._server, self._port)
         self._nombre = nombre
@@ -16,7 +16,7 @@ class Network:
         dato_recibido = None
         while dato_recibido == None:
             try:
-                print("Conectando con servidor...")
+                print("Conectando con servidor... " + self._server)
                 self._client.connect(self._addr)
                 print("Conectado")
                 dato_recibido = pickle.loads(self._client.recv(2048))

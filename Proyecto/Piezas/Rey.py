@@ -60,20 +60,26 @@ class Rey(Pieza):
         if not self._cantidad_movimientos:
             for direccion in direcciones:
                 for col in direccion:
-                    c = casillas[fila][columna+col]
-                    if col != 3 and col != -4:
-                        if c.get_pieza() is not None:
-                            # Hay piezas en el camino
-                            break
-                    else:
-                        if c.get_pieza() is not None and isinstance(c.get_pieza(), Torre) and not c.get_pieza().get_cantidad_movimientos():
-                            enroque = {
-                                "origen-torre": c,
-                                "destino-torre": casillas[fila][columna+col-2] if col > 0 else casillas[fila][columna+col+3],
-                                "destino-rey": casillas[fila][columna+col-1] if col > 0 else casillas[fila][columna+col+2]
-                            }
-                            if not self.esta_en_jaque_en_camino(casilla, enroque, juego):
-                                datos_enroque.append(enroque)
+                    try:
+                        c = casillas[fila][columna + col]
+                        if col != 3 and col != -4:
+                            if c.get_pieza() is not None:
+                                # Hay piezas en el camino
+                                break
+                        else:
+                            if c.get_pieza() is not None and isinstance(c.get_pieza(),
+                                                                        Torre) and not c.get_pieza().get_cantidad_movimientos():
+                                enroque = {
+                                    "origen-torre": c,
+                                    "destino-torre": casillas[fila][columna + col - 2] if col > 0 else casillas[fila][
+                                        columna + col + 3],
+                                    "destino-rey": casillas[fila][columna + col - 1] if col > 0 else casillas[fila][
+                                        columna + col + 2]
+                                }
+                                if not self.esta_en_jaque_en_camino(casilla, enroque, juego):
+                                    datos_enroque.append(enroque)
+                    except:
+                        pass
         return datos_enroque
 
     def esta_en_jaque(self, casilla_rey, casillas):

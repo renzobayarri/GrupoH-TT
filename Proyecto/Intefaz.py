@@ -2,6 +2,7 @@ import tkinter as tk
 from _thread import start_new_thread
 from tkinter import ttk
 import Cliente
+from Server import Server
 
 
 class Interfaz:
@@ -14,6 +15,7 @@ class Interfaz:
         self._continuar_juego = continuar_juego
         self._ventana.title("Ajedrez Clásico")
         self.ingreso_nombre()
+        self.ip = tk.StringVar()
 
     def ingreso_nombre(self):
         label_nombre = tk.Label(self._ventana, text="Nombre")
@@ -53,7 +55,7 @@ class Interfaz:
 
     def mostrar_modos_juego(self):
         tk.Button(self._ventana, text="Entrenamiento", command=self.click_entrenamiento).pack()
-        # tk.Button(self._ventana, text="Jugador 1 VS CPU", command=self.click_vsCPU).pack()
+        tk.Button(self._ventana, text="Jugador 1 VS CPU", command=self.click_vsCPU).pack()
         tk.Button(self._ventana, text="Jugador 1 VS Jugador 2", command=self.click_vsJug2).pack()
         tk.Button(self._ventana, text="Crear partida red local", command=self.click_crear_partida_red_local).pack()
         tk.Button(self._ventana, text="Unirse a partida red local", command=self.click_unirse_partida_red_local).pack()
@@ -71,7 +73,10 @@ class Interfaz:
     def click_vsCPU(self):
         self._juego.set_modo("vsCPU")
         self.limpiar_ventana()
-        self.elegir_color()
+        self._ventana.destroy()
+        self._jugador.set_es_blanco(True)
+        self._juego.set_jugador_blanco(self._jugador)
+        self._continuar_juego()
 
     def click_vsJug2(self):
         self._juego.set_modo("vsJug2")
@@ -86,8 +91,11 @@ class Interfaz:
     def click_unirse_partida_red_local(self):
         self._juego.set_modo("online")
         self.limpiar_ventana()
-        self._ventana.destroy()
-        self.iniciar_cliente()
+        tk.Label(self._ventana, text="Ingrese la IP asignada al creador de la partida").pack()
+        server = tk.Entry(self._ventana, textvariable=self.ip)
+        server.pack()
+        tk.Button(self._ventana, text="Aceptar", command=self.iniciar_cliente).pack()
+        # self.iniciar_cliente()
 
     def elegir_color(self):
         self.limpiar_ventana()
@@ -127,13 +135,14 @@ class Interfaz:
 
     def crear_partida(self):
         start_new_thread(self.iniciar_servidor, ())
-        self.iniciar_cliente()
+        self._continuar_juego()
 
     def iniciar_servidor(self):
-        import Server
+        start_new_thread(Server, (self._juego, self._jugador))
 
     def iniciar_cliente(self):
-        start_new_thread(Cliente.main, (self._jugador, self._juego))
+        start_new_thread(Cliente.main, (self._jugador, self._juego, self.ip.get()))
+        self._ventana.destroy()
         self._continuar_juego()
 
     def mostrar_ventana(self):

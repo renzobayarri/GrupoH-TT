@@ -1,58 +1,82 @@
 import socket
+import tkinter
 from _thread import *
 import pickle
+import Cliente
+import subprocess
 
-server = "192.168.0.103"
-port = 5555
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+class Server:
 
-try:
-    s.bind((server, port))
-except socket.error as e:
-    str(e)
+    def __init__(self, juego, jugador):
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        response = subprocess.run(args="ifconfig wlp3s0 | grep 'inet ' | cut -d: -f2 | awk '{print $2}'",
+                                  capture_output=True,
+                                  shell=True
+                                  )
+        self.server = response.stdout.decode("utf-8").replace("\n", "")
+        self.port = 5555
+        self.juego = juego
+        self.jugador = jugador
 
-s.listen(2)
-print("Waiting for a connection, Server Started")
-
-info_juego = {
-    "turno-blancas": True,
-    "piezas-disponibles": ["B", "N"],
-    "jugadores": [],
-    "cambios": [],
-    "pieza-promocion": None
-}
-
-def threaded_client(conn):
-
-    conn.send(pickle.dumps(info_juego))
-    reply = ""
-
-    while True:
         try:
-            datos_recibidos = pickle.loads(conn.recv(2048))
-            if datos_recibidos != "Nada":
-                info_juego["turno-blancas"] = datos_recibidos["turno-blancas"]
-                info_juego["piezas-disponibles"] = datos_recibidos["piezas-disponibles"]
-                info_juego["jugadores"] = datos_recibidos["jugadores"]
-                info_juego["cambios"] = datos_recibidos["cambios"]
-                info_juego["pieza-promocion"] = datos_recibidos["pieza-promocion"]
-                if not datos_recibidos:
-                    print("Disconnected")
-                    break
+            self.s.bind((self.server, self.port))
+        except socket.error as e:
+            str(e)
 
-            reply = info_juego
-            conn.sendall(pickle.dumps(reply))
+        self.s.listen(2)
+        print("Waiting for a connection, Server Started")
 
-        except:
-            break
+        self.info_juego = {
+            "turno-blancas": True,
+            "piezas-disponibles": ["B", "N"],
+            "jugadores": [],
+            "cambios": [],
+            "pieza-promocion": None
+        }
 
-    print("Lost connection")
-    conn.close()
+        self.ip = tkinter.Tk()
+        tkinter.Label(self.ip, text="Comparte esta IP con el otro jugador para poder conectarse").pack()
+        tkinter.Label(self.ip, text=self.server).pack()
+        tkinter.Button(self.ip, text="Aceptar", command=self.aceptar).pack()
+        self.ip.mainloop()
+        self.escuchar()
+        start_new_thread(Cliente.main, (jugador, juego, self.server))
 
+    def aceptar(self):
+        self.ip.destroy()
+        start_new_thread(Cliente.main, (self.jugador, self.juego, self.server))
+        self.escuchar()
 
-while True:
-    conn, addr = s.accept()
-    print("Connected to:", addr)
+    def threaded_client(self, conn):
 
-    start_new_thread(threaded_client, (conn,))
+        conn.send(pickle.dumps(self.info_juego))
+        reply = ""
+
+        while True:
+            try:
+                datos_recibidos = pickle.loads(conn.recv(2048))
+                if datos_recibidos != "Nada":
+                    self.info_juego["turno-blancas"] = datos_recibidos["turno-blancas"]
+                    self.info_juego["piezas-disponibles"] = datos_recibidos["piezas-disponibles"]
+                    self.info_juego["jugadores"] = datos_recibidos["jugadores"]
+                    self.info_juego["cambios"] = datos_recibidos["cambios"]
+                    self.info_juego["pieza-promocion"] = datos_recibidos["pieza-promocion"]
+                    if not datos_recibidos:
+                        print("Disconnected")
+                        break
+
+                reply = self.info_juego
+                conn.sendall(pickle.dumps(reply))
+
+            except:
+                break
+
+        print("Lost connection")
+        conn.close()
+
+    def escuchar(self):
+        while True:
+            conn, addr = self.s.accept()
+            print("Connected to:", addr)
+            start_new_thread(self.threaded_client, (conn,))

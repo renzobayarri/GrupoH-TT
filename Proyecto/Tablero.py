@@ -1,7 +1,10 @@
 from Piezas import *
 from Casilla import Casilla
 import tkinter as tk
-from tkinter import ttk
+import Ai
+import pieces
+import board
+
 
 class Tablero:
 
@@ -13,6 +16,7 @@ class Tablero:
         self._info_enroque = []
         self._info_peon_al_paso = []
         self._pieza_promocion = None;
+        self.board = board.Board.new()
 
         for fila in range(8):
             filas = []
@@ -149,6 +153,11 @@ class Tablero:
                         self.coronar(casilla, juego)
                     juego.set_turno_blanco(not juego.get_turno_blanco())
                     self.validar_jaques_y_tablas(juego, jugador)
+                    if juego.get_modo() == "vsCPU":
+                        ai_move = Ai.AI.get_ai_move(self.board, [])
+                        self.mover(self._casillas[ai_move.yfrom][ai_move.xfrom], self._casillas[ai_move.yto][ai_move.xto], juego)
+                        self.validar_jaques_y_tablas(juego, jugador)
+                        juego.set_turno_blanco(not juego.get_turno_blanco())
                 else:
                     if self._info_enroque:
                         hacer_enroque = False
@@ -160,6 +169,12 @@ class Tablero:
                                 juego.set_turno_blanco(not juego.get_turno_blanco())
                                 hacer_enroque = True
                                 self.validar_jaques_y_tablas(juego, jugador)
+                                if juego.get_modo() == "vsCPU":
+                                    ai_move = Ai.AI.get_ai_move(self.board, [])
+                                    self.mover(self._casillas[ai_move.yfrom][ai_move.xfrom],
+                                               self._casillas[ai_move.yto][ai_move.xto], juego)
+                                    self.validar_jaques_y_tablas(juego, jugador)
+                                    juego.set_turno_blanco(not juego.get_turno_blanco())
 
                         if not hacer_enroque:
                             self.cancelar_seleccion()
@@ -176,6 +191,12 @@ class Tablero:
                                     juego.set_turno_blanco(not juego.get_turno_blanco())
                                     hacer_movimiento = True
                                     self.validar_jaques_y_tablas(juego, jugador)
+                                    if juego.get_modo() == "vsCPU":
+                                        ai_move = Ai.AI.get_ai_move(self.board, [])
+                                        self.mover(self._casillas[ai_move.yfrom][ai_move.xfrom],
+                                                   self._casillas[ai_move.yto][ai_move.xto], juego)
+                                        self.validar_jaques_y_tablas(juego, jugador)
+                                        juego.set_turno_blanco(not juego.get_turno_blanco())
                             if not hacer_movimiento:
                                 self.cancelar_seleccion()
                                 if casilla.get_pieza() is not None:
@@ -229,12 +250,14 @@ class Tablero:
 
     def mover(self, origen, destino, juego):
 
-
         cambio = [
                 [origen.get_fila(), origen.get_columna()],
                 [destino.get_fila(), destino.get_columna()]
             ]
         juego.get_cambio().append(cambio)
+
+        move = Ai.Move(origen.get_columna(), origen.get_fila(), destino.get_columna(), destino.get_fila(), False)
+        self.board.perform_move(move)
 
         if destino.get_pieza() is not None:
             juego.get_piezas_eliminadas().append(destino.get_pieza())
@@ -280,7 +303,6 @@ class Tablero:
                     img2 = tk.PhotoImage(file="./assets/br.png")
                     img3 = tk.PhotoImage(file="./assets/bb.png")
                     img4 = tk.PhotoImage(file="./assets/bn.png")
-                #ventana.iconbitmap(file="./assets/bb.png")
 
                 reina = tk.Button(
                     ventana,
@@ -343,6 +365,25 @@ class Tablero:
         self.set_pieza_promocion(clase)
         juego.set_turno_blanco(not juego.get_turno_blanco())
         self.validar_jaques_y_tablas(juego, jugador)
+        fila = casilla.get_fila()
+        columna = casilla.get_columna()
+        color = pieces.Piece.WHITE if blanca else pieces.Piece.BLACK
+        if clase == Reina.Reina:
+            self.board.chesspieces[columna][fila] = pieces.Queen(columna, fila, color)
+        elif clase == Torre.Torre:
+            self.board.chesspieces[columna][fila] = pieces.Rook(columna, fila, color)
+        elif clase == Caballo.Caballo:
+            self.board.chesspieces[columna][fila] = pieces.Knight(columna, fila, color)
+        elif clase == Alfil.Alfil:
+            self.board.chesspieces[columna][fila] = pieces.Bishop(columna, fila, color)
+        if juego.get_modo() == "vsCPU":
+            ai_move = Ai.AI.get_ai_move(self.board, [])
+            self.mover(self._casillas[ai_move.yfrom][ai_move.xfrom],
+                       self._casillas[ai_move.yto][ai_move.xto], juego)
+            self.validar_jaques_y_tablas(juego, jugador)
+            juego.set_turno_blanco(not juego.get_turno_blanco())
+            self.validar_jaques_y_tablas(juego, jugador)
+
 
     def validar_jaques_y_tablas(self, juego, jugador, turno_sin_cambiar=False):
         if not self.es_jaque(juego, jugador):

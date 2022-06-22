@@ -3,9 +3,9 @@ from Jugador import Jugador
 from Piezas import Rey, Peon
 
 
-def main(jugador, juego):
+def main(jugador, juego, server):
     run = True
-    n = Network(jugador.get_nombre())
+    n = Network(jugador.get_nombre(), server)
     otroJugador = Jugador()
 
     while run:
