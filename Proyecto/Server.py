@@ -10,11 +10,19 @@ class Server:
 
     def __init__(self, juego, jugador):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        response = subprocess.run(args="ifconfig wlp3s0 | grep 'inet ' | cut -d: -f2 | awk '{print $2}'",
+        i = 0
+        while True:
+            response = subprocess.run(args="ifconfig wlp" + str(i) + "s0 | grep 'inet ' | cut -d: -f2 | awk '{print $2}'",
                                   capture_output=True,
                                   shell=True
                                   )
-        self.server = response.stdout.decode("utf-8").replace("\n", "")
+            if response.stdout.decode("utf-8") == "":
+                i += 1
+                if i == 20:
+                    exit()
+            else:
+                self.server = response.stdout.decode("utf-8").replace("\n", "")
+                break
         self.port = 5555
         self.juego = juego
         self.jugador = jugador
