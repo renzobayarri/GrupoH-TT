@@ -43,18 +43,11 @@ class Server:
             "pieza-promocion": None
         }
 
-        self.ip = tkinter.Tk()
-        tkinter.Label(self.ip, text="Comparte esta IP con el otro jugador para poder conectarse").pack()
-        tkinter.Label(self.ip, text=self.server).pack()
-        tkinter.Button(self.ip, text="Aceptar", command=self.aceptar).pack()
-        self.ip.mainloop()
-        self.escuchar()
         start_new_thread(Cliente.main, (jugador, juego, self.server))
+        self.escuchar()
 
     def aceptar(self):
         self.ip.destroy()
-        start_new_thread(Cliente.main, (self.jugador, self.juego, self.server))
-        self.escuchar()
 
     def threaded_client(self, conn):
 
@@ -84,7 +77,16 @@ class Server:
         conn.close()
 
     def escuchar(self):
+        i = 0
         while True:
             conn, addr = self.s.accept()
+            i += 1
             print("Connected to:", addr)
             start_new_thread(self.threaded_client, (conn,))
+            if i == 1:
+                self.ip = tkinter.Tk()
+                tkinter.Label(self.ip, text="Comparte esta IP con el otro jugador para poder conectarse").pack()
+                tkinter.Label(self.ip, text=self.server).pack()
+                tkinter.Button(self.ip, text="Aceptar", command=self.aceptar).pack()
+                self.ip.mainloop()
+

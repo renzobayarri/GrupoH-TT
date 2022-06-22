@@ -14,14 +14,20 @@ class Network:
 
     def connect(self):
         dato_recibido = None
+        i = 0
         while dato_recibido == None:
             try:
-                print("Conectando con servidor... " + self._server)
+                if i == 0:
+                    print("Conectando con servidor... " + self._server)
+                elif i == 300:
+                    print("No se pudo conectar al servidor. Verifique la IP ingresada y su conexión a la red local")
+                    exit()
                 self._client.connect(self._addr)
                 print("Conectado")
                 dato_recibido = pickle.loads(self._client.recv(2048))
                 return dato_recibido
             except:
+                i += 1
                 pass
 
     def send(self, data):

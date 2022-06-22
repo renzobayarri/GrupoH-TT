@@ -101,8 +101,8 @@ class Interfaz:
         self.limpiar_ventana()
         global pieza_blanca
         global pieza_negra
-        pieza_blanca = tk.PhotoImage(file=r"./assets/wp.png")
-        pieza_negra = tk.PhotoImage(file=r"./assets/bp.png")
+        pieza_blanca = tk.PhotoImage(file=r"./assets/wp.png").subsample(2,2)
+        pieza_negra = tk.PhotoImage(file=r"./assets/bp.png").subsample(2,2)
 
         btn_blancas = ttk.Button(
             self._ventana,

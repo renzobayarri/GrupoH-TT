@@ -286,7 +286,6 @@ class Tablero:
         if fila == 0 or fila == 7:
             if casilla.get_pieza().get_nombre() == "peon_blanco" or casilla.get_pieza().get_nombre() == "peon_negro":
                 ventana = tk.Toplevel()
-                ventana.geometry("150x600")
                 ventana.title("Coronar peon")
                 ventana.rowconfigure(0, weight= 1)
                 ventana.rowconfigure(1, weight=1)
@@ -294,15 +293,15 @@ class Tablero:
                 ventana.rowconfigure(3, weight=1)
                 ventana.columnconfigure(0, weight=1)
                 if casilla.get_pieza().get_es_blanca():
-                    img1 = tk.PhotoImage(file="./assets/wq.png")
-                    img2 = tk.PhotoImage(file="./assets/wr.png")
-                    img3 = tk.PhotoImage(file="./assets/wb.png")
-                    img4 = tk.PhotoImage(file="./assets/wn.png")
+                    img1 = tk.PhotoImage(file="./assets/wq.png").subsample(2,2)
+                    img2 = tk.PhotoImage(file="./assets/wr.png").subsample(2,2)
+                    img3 = tk.PhotoImage(file="./assets/wb.png").subsample(2,2)
+                    img4 = tk.PhotoImage(file="./assets/wn.png").subsample(2,2)
                 else:
-                    img1 = tk.PhotoImage(file="./assets/bq.png")
-                    img2 = tk.PhotoImage(file="./assets/br.png")
-                    img3 = tk.PhotoImage(file="./assets/bb.png")
-                    img4 = tk.PhotoImage(file="./assets/bn.png")
+                    img1 = tk.PhotoImage(file="./assets/bq.png").subsample(2,2)
+                    img2 = tk.PhotoImage(file="./assets/br.png").subsample(2,2)
+                    img3 = tk.PhotoImage(file="./assets/bb.png").subsample(2,2)
+                    img4 = tk.PhotoImage(file="./assets/bn.png").subsample(2,2)
 
                 reina = tk.Button(
                     ventana,
