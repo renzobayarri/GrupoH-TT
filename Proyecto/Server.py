@@ -19,7 +19,20 @@ class Server:
             if response.stdout.decode("utf-8") == "":
                 i += 1
                 if i == 20:
-                    exit()
+                    encontrado = False
+                    for j in range(20):
+                        for k in range(20):
+                            response = subprocess.run(
+                                args="ifconfig enp" + str(j) + "s" + str(k) +" | grep 'inet ' | cut -d: -f2 | awk '{print $2}'",
+                                capture_output=True,
+                                shell=True
+                                )
+                            if response.stdout.decode("utf-8") != "":
+                                self.server = response.stdout.decode("utf-8").replace("\n", "")
+                                encontrado = True
+                                break
+                        if not encontrado:
+                            exit()
             else:
                 self.server = response.stdout.decode("utf-8").replace("\n", "")
                 break
